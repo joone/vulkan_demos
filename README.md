@@ -1,4 +1,8 @@
 # Vulkan Demos
+Install vulkan library in your system.
+``
+$  sudo apt-get install libvulkan-dev
+``
 
 ```
 $ cd ~/git/chromium/src
