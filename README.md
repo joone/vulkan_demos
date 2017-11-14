@@ -21,3 +21,6 @@ Run vulkan_tests
 $ out/Release/vulkan_test 
 ```
 
+# Troubleshooting
+## glslang build issue
+See https://bugs.chromium.org/p/chromium/issues/detail?id=682523&desc=2#c15
