@@ -47,6 +47,30 @@ executable("demo_1") {
   configs += [ "//build/config/linux:x11", ":internal_config" ]
 }
 
+executable("demo_2") {
+ sources = [
+    "vulkan_buffer.cc",
+    "vulkan_device_queue.cc",
+    "vulkan_command_pool.cc",
+    "vulkan_image_view.cc",
+    "vulkan_implementation.cc",
+    "vulkan_shader_module.cc",
+    "vulkan_surface.cc",
+    "vulkan_swap_chain.cc",
+    "vulkan_render_pass.cc",
+    "../demos/demo2.cc",
+    "../tests/native_window_x11.cc",
+
+  ]
+  deps = [ 
+   "//third_party/shaderc:libshaderc",
+    "//ui/base",
+    "//ui/gfx/x",
+  ]
+
+  configs += [ "//build/config/linux:x11", ":internal_config" ]
+}
+
 test("vulkan_test") {
   sources = [
     "vulkan_buffer.cc",
