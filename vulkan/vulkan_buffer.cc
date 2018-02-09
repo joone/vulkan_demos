@@ -14,9 +14,9 @@ VulkanBuffer::VulkanBuffer()
 VulkanBuffer::~VulkanBuffer() {}
 
 bool VulkanBuffer::Initialize(VulkanDeviceQueue* device_queue,
-                              VertexData* vertex_data) {
+                              VertexData* vertex_data, uint32_t num_vertics) {
   device_ = device_queue->GetVulkanDevice();
-  size_ = sizeof(*vertex_data) * 4;
+  size_ = sizeof(*vertex_data) * num_vertics;
   printf(" Vertext size=%d\n", size_);
 
   VkBufferCreateInfo buffer_create_info = {
@@ -46,7 +46,7 @@ bool VulkanBuffer::Initialize(VulkanDeviceQueue* device_queue,
     return false;
   }
 
-  void* vertex_buffer_memory_pointer;
+  void* vertex_buffer_memory_pointer; 
   if (vkMapMemory(device_, memory_, 0, size_, 0,
                   &vertex_buffer_memory_pointer) != VK_SUCCESS) {
     std::cout << "Could not map memory and upload data to a vertex buffer!"

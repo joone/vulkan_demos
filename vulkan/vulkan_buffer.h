@@ -17,7 +17,7 @@ class VulkanBuffer {
 
   VulkanBuffer();
   ~VulkanBuffer();
-  bool Initialize(VulkanDeviceQueue*, VertexData*);
+  bool Initialize(VulkanDeviceQueue*, VertexData*, uint32_t num_vertics);
   VkBuffer* handle() { return &handle_; }
 
  private:

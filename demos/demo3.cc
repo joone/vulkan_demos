@@ -114,7 +114,7 @@ int main(int argc, char** argv) {
   };
 
   VulkanBuffer vertexBuffer;
-  vertexBuffer.Initialize(&device_queue, vertex_data);
+  vertexBuffer.Initialize(&device_queue, vertex_data, 4);
 
   // CreateCommandBuffers()
   //   CreateCommandPool()
