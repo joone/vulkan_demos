@@ -66,8 +66,7 @@ bool VulkanRenderPass::Initialize(const VulkanSwapChain* swap_chain) {
       0,        // uint32_t                       inputAttachmentCount
       nullptr,  // const VkAttachmentReference   *pInputAttachments
       1,        // uint32_t                       colorAttachmentCount
-      color_attachment_references,  // const VkAttachmentReference
-                                    // *pColorAttachments
+      color_attachment_references,  // VkAttachmentReference(color attachments)
       nullptr,  // const VkAttachmentReference   *pResolveAttachments
       nullptr,  // const VkAttachmentReference   *pDepthStencilAttachment
       0,        // uint32_t                       preserveAttachmentCount
@@ -218,15 +217,15 @@ bool VulkanRenderPass::CreatePipeline(const std::string& kVertexShaderSource,
 
   std::vector<VkVertexInputAttributeDescription> vertex_attribute_descriptions =
       {{
-           0,  // uint32_t                                       location
+           0,  // uint32_t location
            vertex_binding_descriptions[0].binding,       // uint32_t binding
            VK_FORMAT_R32G32B32A32_SFLOAT,                // VkFormat format
            offsetof(struct VulkanBuffer::VertexData, x)  // uint32_t offset
        },
        {
-           1,  // uint32_t                       location
+           1,  // uint32_t location
            vertex_binding_descriptions[0].binding,  // uint32_t binding
-           VK_FORMAT_R32G32B32A32_SFLOAT,  // VkFormat            format
+           VK_FORMAT_R32G32B32A32_SFLOAT,  // VkFormat format
            offsetof(struct VulkanBuffer::VertexData, r)  // uint32_t offset
        }};
   // end of only for tutorial4
@@ -408,37 +407,25 @@ bool VulkanRenderPass::CreatePipeline(const std::string& kVertexShaderSource,
       0,        // VkPipelineCreateFlags                          flags
       static_cast<uint32_t>(
           shader_stage_create_infos.size()),  // uint32_t stageCount
-      &shader_stage_create_infos[0],          // const VkPipelineShaderStageCreateInfo
-                                              // *pStages
-      &vertex_input_state_create_info,        // const
-                                        // VkPipelineVertexInputStateCreateInfo
-                                        // *pVertexInputState;
-      &input_assembly_state_create_info,  // const
-                                          // VkPipelineInputAssemblyStateCreateInfo
+      &shader_stage_create_infos[0],   // const VkPipelineShaderStageCreateInfo
+      &vertex_input_state_create_info, // VkPipelineVertexInputStateCreateInfo
+      &input_assembly_state_create_info, // VkPipelineInputAssemblyStateCreateInfo
                                           // *pInputAssemblyState
-      nullptr,                           // const VkPipelineTessellationStateCreateInfo
-                                         // *pTessellationState
-      &viewport_state_create_info,       // const VkPipelineViewportStateCreateInfo
-                                         // *pViewportState
-      &rasterization_state_create_info,  // const
-                                         // VkPipelineRasterizationStateCreateInfo
-                                         // *pRasterizationState
-      &multisample_state_create_info,  // const
-                                       // VkPipelineMultisampleStateCreateInfo
-                                       // *pMultisampleState
+      nullptr,                     // const VkPipelineTessellationStateCreateInfo
+      &viewport_state_create_info, // const VkPipelineViewportStateCreateInfo
+      &rasterization_state_create_info, // VkPipelineRasterizationStateCreateInfo
+      &multisample_state_create_info,  // VkPipelineMultisampleStateCreateInfo
       nullptr,                         // const VkPipelineDepthStencilStateCreateInfo
-                                       // *pDepthStencilState
-      &color_blend_state_create_info,  // const
-                                       // VkPipelineColorBlendStateCreateInfo
+      &color_blend_state_create_info,  // VkPipelineColorBlendStateCreateInfo
                                        // *pColorBlendState
       pDynamicStateCreateInfo,         //   (tutorial4)       // const
                                        //   VkPipelineDynamicStateCreateInfo
                                        //   *pDynamicState
       pipeline_layout_,                // VkPipelineLayout layout
       render_pass_,                    // VkRenderPass renderPass
-      0,               // uint32_t                                       subpass
+      0,               // uint32_t subpass
       VK_NULL_HANDLE,  // VkPipeline basePipelineHandle
-      -1  // int32_t                                        basePipelineIndex
+      -1  // int32_t basePipelineIndex
   };
 
   if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1,

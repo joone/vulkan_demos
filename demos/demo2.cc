@@ -77,7 +77,6 @@ int main(int argc, char** argv) {
       VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,  // VkStructureTyp sType
       nullptr,  // const void                 *pNext
       VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT,  // VkCommandBufferUsageFlags
-                                                     // flags
       nullptr  // const VkCommandBufferInheritanceInfo  *pInheritanceInfo
   };
 

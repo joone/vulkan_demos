@@ -55,9 +55,8 @@ int main(int argc, char** argv) {
 
   VkCommandBufferBeginInfo cmd_buffer_begin_info = {
       VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,  // VkStructureType sType
-      nullptr,  // const void                            *pNext
+      nullptr,  // const void *pNext
       VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT,  // VkCommandBufferUsageFlags
-                                                     // flags
       nullptr  // const VkCommandBufferInheritanceInfo  *pInheritanceInfo
   };
 
@@ -74,7 +73,7 @@ int main(int argc, char** argv) {
   for (uint32_t i = 0; i < image_count; ++i) {
     VkImageMemoryBarrier barrier_from_present_to_clear = {
         VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,  // VkStructureType sType
-        nullptr,  // const void                            *pNext
+        nullptr,                               // const void *pNext
         VK_ACCESS_MEMORY_READ_BIT,             // VkAccessFlags srcAccessMask
         VK_ACCESS_TRANSFER_WRITE_BIT,          // VkAccessFlags dstAccessMask
         VK_IMAGE_LAYOUT_UNDEFINED,             // VkImageLayout oldLayout
@@ -87,7 +86,7 @@ int main(int argc, char** argv) {
 
     VkImageMemoryBarrier barrier_from_clear_to_present = {
         VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,  // VkStructureType sType
-        nullptr,  // const void                            *pNext
+        nullptr,                               // const void *pNext
         VK_ACCESS_TRANSFER_WRITE_BIT,          // VkAccessFlags srcAccessMask
         VK_ACCESS_MEMORY_READ_BIT,             // VkAccessFlags dstAccessMask
         VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,  // VkImageLayout oldLayout

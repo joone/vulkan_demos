@@ -39,10 +39,6 @@ struct RenderingResourcesData {
     }
 };*/
 
-// static const size_t ResourcesCount = 3;
-// std::vector<RenderingResourcesData> RenderingResources;
-// VkCommandPool GraphicsCommandPool;
-
 int main(int argc, char** argv) {
   base::CommandLine::Init(argc, argv);
 
@@ -99,10 +95,23 @@ int main(int argc, char** argv) {
 
   // Tutorial04::CreateVertexBuffer
   VulkanBuffer::VertexData vertex_data[] = {
-      {-0.7f, -0.7f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f},
-      {-0.7f, 0.7f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f},
-      {0.7f, -0.7f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f},
-      {0.7f, 0.7f, 0.0f, 1.0f, 0.3f, 0.3f, 0.3f, 0.0f}};
+    {
+      -0.7f, -0.7f, 0.0f, 1.0f,
+      1.0f, 0.0f, 0.0f, 0.0f
+    },
+    {
+      -0.7f, 0.7f, 0.0f, 1.0f,
+      0.0f, 1.0f, 0.0f, 0.0f
+    },
+    {
+      0.7f, -0.7f, 0.0f, 1.0f,
+      0.0f, 0.0f, 1.0f, 0.0f
+    },
+    {
+      0.7f, 0.7f, 0.0f, 1.0f,
+      0.3f, 0.3f, 0.3f, 0.0f
+    }
+  };
 
   VulkanBuffer vertexBuffer;
   vertexBuffer.Initialize(&device_queue, vertex_data);
@@ -111,12 +120,11 @@ int main(int argc, char** argv) {
   //   CreateCommandPool()
   /*
   VkCommandPoolCreateInfo cmd_pool_create_info = {
-      VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,       // VkStructureType sType
-      nullptr,                                          // const void *pNext
-      VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT | //
-  VkCommandPoolCreateFlags       flags VK_COMMAND_POOL_CREATE_TRANSIENT_BIT,
-      device_queue.GetGraphicsQueueFamilyIndex()
-  // uint32_t                       queueFamilyIndex
+   VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,       // VkStructureType sType
+   nullptr,                                          // const void *pNext
+   VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT | // VkCommandPoolCreateFlag
+   VK_COMMAND_POOL_CREATE_TRANSIENT_BIT,
+   device_queue.GetGraphicsQueueFamilyIndex()      // uint32_t queueFamilyIndex
   };
 
   if (vkCreateCommandPool(device_queue.GetVulkanDevice(),
@@ -126,12 +134,11 @@ int main(int argc, char** argv) {
 
   for (size_t i = 0; i < surface->GetSwapChain()->num_images(); ++i) {
      VkCommandBufferAllocateInfo command_buffer_allocate_info = {
-      VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,   // VkStructureType sType
-      nullptr,                                          // const void *pNext
-      GraphicsCommandPool,                                             //
-  VkCommandPool                  commandPool VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-  // VkCommandBufferLevel           level ResourcesCount
-  // uint32_t                       bufferCount
+      VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO, // VkStructureType
+      nullptr,                         // const void *pNext
+      GraphicsCommandPool,             // VkCommandPool commandPool
+      VK_COMMAND_BUFFER_LEVEL_PRIMARY, // VkCommandBufferLevel level
+      ResourcesCount                   // uint32_t bufferCount
       };
 
     if (vkAllocateCommandBuffers(device_queue.GetVulkanDevice(),
@@ -145,8 +152,8 @@ int main(int argc, char** argv) {
   // CreateSemaphore
   VkSemaphoreCreateInfo semaphore_create_info = {
       VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,     // VkStructureType sType
-      nullptr,                                     // const void* pNext 0
-  // VkSemaphoreCreateFlags   flags
+      nullptr,                                     // const void* pNext
+      0                                   // VkSemaphoreCreateFlags   flags
   };
 
   for (size_t i = 0; i < surface->GetSwapChain()->num_images(); ++i) {
@@ -164,10 +171,9 @@ int main(int argc, char** argv) {
 
   // CreateFences
   VkFenceCreateInfo fence_create_info = {
-    VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,              // VkStructureType sType
-    nullptr,                                          // const void *pNext
-    VK_FENCE_CREATE_SIGNALED_BIT                      // VkFenceCreateFlags
-  flags
+    VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,   // VkStructureType sType
+    nullptr,                               // const void *pNext
+    VK_FENCE_CREATE_SIGNALED_BIT           // VkFenceCreateFlags flags
   };
 
   for (size_t i = 0; i < surface->GetSwapChain()->num_images(); ++i) {
@@ -244,7 +250,6 @@ int main(int argc, char** argv) {
           VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,  // VkStructureType sType
           nullptr,  // const void                            *pNext
           VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,  // VkCommandBufferUsageFlags
-                                                        // flags
           nullptr  // const VkCommandBufferInheritanceInfo  *pInheritanceInfo
       };
 
@@ -297,8 +302,8 @@ int main(int argc, char** argv) {
               // VkRect2D                               renderArea
               {
                   // VkOffset2D                             offset
-                  0,  // int32_t                                x
-                  0   // int32_t                                y
+                  0,  // x
+                  0   // y
               },
               surface->GetSwapChain()->GetExtent(),  // VkExtent2D extent;
           },
@@ -317,9 +322,9 @@ int main(int argc, char** argv) {
           0.0f,  // float            x
           0.0f,  // float            y
           static_cast<float>(
-              surface->GetSwapChain()->GetExtent().width),  // float width
+              surface->GetSwapChain()->GetExtent().width),
           static_cast<float>(
-              surface->GetSwapChain()->GetExtent().height),  // float height
+              surface->GetSwapChain()->GetExtent().height),
           0.0f,  // float            minDepth
           1.0f   // float            maxDepth
       };
@@ -332,8 +337,8 @@ int main(int argc, char** argv) {
           },
           {
               // VkExtent2D        extent
-              surface->GetSwapChain()->GetExtent().width,  // uint32_t width
-              surface->GetSwapChain()->GetExtent().height  // uint32_t height
+              surface->GetSwapChain()->GetExtent().width,
+              surface->GetSwapChain()->GetExtent().height
           }};
 
       vkCmdSetViewport(
