@@ -44,7 +44,7 @@ static_library("vulkan_apis") {
   configs += [ "//build/config/linux:x11", ":internal_config" ]
 }
 
-executable("demo_1") {
+test("demo_1") {
   sources = [
     "../demos/demo1.cc",
     "../tests/native_window_x11.cc",
@@ -55,7 +55,7 @@ executable("demo_1") {
   ]
 }
 
-executable("demo_2") {
+test("demo_2") {
   sources = [
     "../demos/demo2.cc",
     "../tests/native_window_x11.cc",
