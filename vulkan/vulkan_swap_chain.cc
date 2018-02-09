@@ -57,10 +57,12 @@ gfx::SwapResult VulkanSwapChain::SwapBuffers() {
     case VK_ERROR_OUT_OF_DATE_KHR:
       if (device_queue_->OnWindowSizeChanged())
         return gfx::SwapResult::SWAP_ACK;
+      break;
     default:
       std::cout << "Problem occurred during swap chain image acquisition!"
                 << std::endl;
       return gfx::SwapResult::SWAP_FAILED;
+
   }
 
   // Submit our command buffer for the current buffer.
@@ -94,6 +96,7 @@ gfx::SwapResult VulkanSwapChain::SwapBuffers() {
     case VK_SUBOPTIMAL_KHR:
       if (device_queue_->OnWindowSizeChanged())
         return gfx::SwapResult::SWAP_ACK;
+      break;
     default:
       std::cout << "Problem occurred during image presentation!" << std::endl;
       return gfx::SwapResult::SWAP_FAILED;
@@ -142,8 +145,7 @@ bool VulkanSwapChain::InitializeSwapChain(
           device_queue_->GetVulkanPhysicalDevice(), surface,
           &present_modes_count, &present_modes[0]) != VK_SUCCESS) {
     std::cout << "Error occurred during presentation surface present modes "
-                 "enumeration!"
-              << std::endl;
+                 "enumeration!"   << std::endl;
     return false;
   }
 
@@ -481,8 +483,6 @@ bool VulkanSwapChain::CreateFences() {
 // For tutorial4
 bool VulkanSwapChain::WaitFences(uint32_t* resource_index,
                                  uint32_t* image_index) {
-  printf("VulkanSwapChain::%s\n", __func__);
-
   std::unique_ptr<ImageData>& image_data = images_[*resource_index];
   VkDevice device = device_queue_->GetVulkanDevice();
   *resource_index = (*resource_index + 1) % image_count_;
@@ -499,10 +499,9 @@ bool VulkanSwapChain::WaitFences(uint32_t* resource_index,
     case VK_SUCCESS:
       break;
     case VK_SUBOPTIMAL_KHR:
-      printf("  Window resize?\n");
       break;
-    //    case VK_ERROR_OUT_OF_DATE_KHR:
-    //        return OnWindowSizeChanged();
+    // case VK_ERROR_OUT_OF_DATE_KHR:
+    //   return OnWindowSizeChanged();
     default:
       std::cout << "Problem occurred during swap chain image acquisition!"
                 << std::endl;
@@ -514,7 +513,6 @@ bool VulkanSwapChain::WaitFences(uint32_t* resource_index,
 // for tutorial4
 bool VulkanSwapChain::SwapBuffer2(uint32_t resource_index,
                                   uint32_t* image_index) {
-  printf("VulkanSwapChain::%s\n", __func__);
   std::unique_ptr<ImageData>& image_data = images_[resource_index];
   VkQueue queue = device_queue_->GetPresentQueue();
 
@@ -560,8 +558,6 @@ bool VulkanSwapChain::SwapBuffer2(uint32_t resource_index,
       std::cout << "Problem occurred during image presentation!" << std::endl;
       return false;
   }
-  printf("end of VulkanSwapChain::%s\n", __func__);
-
   return true;
 }
 

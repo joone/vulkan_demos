@@ -149,16 +149,13 @@ int main(int argc, char** argv) {
       }
     } else {
       // Draw
-      printf("\nDraw Start\n");
       static uint32_t resource_index = 0;
       uint32_t image_index = 0;
       surface->GetSwapChain()->WaitFences(&resource_index, &image_index);
-      printf(" new image_index=%d\n", image_index);
-      printf(" resource_index=%d\n", resource_index);
       // Tutorial04::PrepareFrame() is called in Draw();
       if (!render_pass.CreateFrameBuffer(surface->GetSwapChain(),
                                          resource_index)) {
-        printf("fail to create a frame buffer\n");
+         std::cout << "fail to create a frame buffer\n"  << std::endl;
         return 0;
       }
 
@@ -302,7 +299,6 @@ int main(int argc, char** argv) {
       }
       // end of Tutorial04::PrepareFrame
       surface->GetSwapChain()->SwapBuffer2(resource_index, &image_index);
-      printf("Draw_end\n");
     }
   }  // end of while
 
