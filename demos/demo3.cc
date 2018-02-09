@@ -22,23 +22,6 @@
 
 using namespace gpu;
 
-/*
-struct RenderingResourcesData {
-    VkFramebuffer                         Framebuffer;
-    VkCommandBuffer                       CommandBuffer;
-    VkSemaphore                           ImageAvailableSemaphore;
-    VkSemaphore                           FinishedRenderingSemaphore;
-    VkFence                               Fence;
-
-    RenderingResourcesData() :
-      Framebuffer( VK_NULL_HANDLE ),
-      CommandBuffer( VK_NULL_HANDLE ),
-      ImageAvailableSemaphore( VK_NULL_HANDLE ),
-      FinishedRenderingSemaphore( VK_NULL_HANDLE ),
-      Fence( VK_NULL_HANDLE ) {
-    }
-};*/
-
 int main(int argc, char** argv) {
   base::CommandLine::Init(argc, argv);
 
@@ -116,72 +99,6 @@ int main(int argc, char** argv) {
   VulkanBuffer vertexBuffer;
   vertexBuffer.Initialize(&device_queue, vertex_data, 4);
 
-  // CreateCommandBuffers()
-  //   CreateCommandPool()
-  /*
-  VkCommandPoolCreateInfo cmd_pool_create_info = {
-   VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,       // VkStructureType sType
-   nullptr,                                          // const void *pNext
-   VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT | // VkCommandPoolCreateFlag
-   VK_COMMAND_POOL_CREATE_TRANSIENT_BIT,
-   device_queue.GetGraphicsQueueFamilyIndex()      // uint32_t queueFamilyIndex
-  };
-
-  if (vkCreateCommandPool(device_queue.GetVulkanDevice(),
-      &cmd_pool_create_info, nullptr, &GraphicsCommandPool) != VK_SUCCESS ) {
-    return false;
-  }
-
-  for (size_t i = 0; i < surface->GetSwapChain()->num_images(); ++i) {
-     VkCommandBufferAllocateInfo command_buffer_allocate_info = {
-      VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO, // VkStructureType
-      nullptr,                         // const void *pNext
-      GraphicsCommandPool,             // VkCommandPool commandPool
-      VK_COMMAND_BUFFER_LEVEL_PRIMARY, // VkCommandBufferLevel level
-      ResourcesCount                   // uint32_t bufferCount
-      };
-
-    if (vkAllocateCommandBuffers(device_queue.GetVulkanDevice(),
-          &command_buffer_allocate_info,
-          surface->GetSwapChain()->GetCommandBuffer(i)) != VK_SUCCESS ) {
-      return false;
-    }
-
-  } // end of for
-
-  // CreateSemaphore
-  VkSemaphoreCreateInfo semaphore_create_info = {
-      VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,     // VkStructureType sType
-      nullptr,                                     // const void* pNext
-      0                                   // VkSemaphoreCreateFlags   flags
-  };
-
-  for (size_t i = 0; i < surface->GetSwapChain()->num_images(); ++i) {
-    if ((vkCreateSemaphore(device_queue.GetVulkanDevice(),
-  &semaphore_create_info, nullptr,
-  surface->GetSwapChain()->GetImageAvailableSemaphore(i)) != VK_SUCCESS)
-        || (vkCreateSemaphore(device_queue.GetVulkanDevice(),
-  &semaphore_create_info, nullptr,
-  surface->GetSwapChain()->GetFinishedRenderingSemaphore(i))
-        != VK_SUCCESS) ) {
-      std::cout << "Could not create semaphores!" << std::endl;
-      return 0;
-    }
-  }
-
-  // CreateFences
-  VkFenceCreateInfo fence_create_info = {
-    VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,   // VkStructureType sType
-    nullptr,                               // const void *pNext
-    VK_FENCE_CREATE_SIGNALED_BIT           // VkFenceCreateFlags flags
-  };
-
-  for (size_t i = 0; i < surface->GetSwapChain()->num_images(); ++i) {
-    if( vkCreateFence(device_queue.GetVulkanDevice(), &fence_create_info,
-  nullptr, surface->GetSwapChain()->GetFence(i)) != VK_SUCCESS ) { std::cout <<
-  "Could not create a fence!" << std::endl; return 0;
-    }
-  }*/
 
   // Run loop
   // Prepare notification for window destruction
