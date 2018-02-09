@@ -45,23 +45,27 @@ class VULKAN_EXPORT VulkanDeviceQueue {
   }
 
   VkQueue GetPresentQueue() const {
-  //  DCHECK_NE(static_cast<VkQueue>(VK_NULL_HANDLE), vk_queue_);
+    //  DCHECK_NE(static_cast<VkQueue>(VK_NULL_HANDLE), vk_queue_);
     return PresentQueue_;
   }
 
- VkQueue GetGraphicsQueue() const {
-  //  DCHECK_NE(static_cast<VkQueue>(VK_NULL_HANDLE), vk_queue_);
+  VkQueue GetGraphicsQueue() const {
+    //  DCHECK_NE(static_cast<VkQueue>(VK_NULL_HANDLE), vk_queue_);
     return GraphicsQueue_;
   }
 
-  uint32_t GetPresentQueueFamilyIndex() const { return vk_present_queue_family_index_; }
-  uint32_t GetGraphicsQueueFamilyIndex() const { return vk_graphics_queue_family_index_; }
+  uint32_t GetPresentQueueFamilyIndex() const {
+    return vk_present_queue_family_index_;
+  }
+  uint32_t GetGraphicsQueueFamilyIndex() const {
+    return vk_graphics_queue_family_index_;
+  }
   bool OnWindowSizeChanged();
   bool ReadyToDraw() { return CanRender_; }
 
   std::unique_ptr<gpu::VulkanCommandPool> CreateCommandPool(VulkanSwapChain*);
 
-  void CanRender(bool val) { CanRender_ = val;}
+  void CanRender(bool val) { CanRender_ = val; }
 
  private:
   VkPhysicalDevice vk_physical_device_ = VK_NULL_HANDLE;
@@ -74,11 +78,13 @@ class VULKAN_EXPORT VulkanDeviceQueue {
 
   bool CanRender_ = false;
 
-  bool CheckExtensionAvailability(const char *extension_name,
-       const std::vector<VkExtensionProperties> &available_extensions);
-  bool CheckPhysicalDeviceProperties(VkPhysicalDevice vk_physical_device,
-      uint32_t &selected_graphics_queue_family_index,
-      uint32_t &selected_present_queue_family_index );
+  bool CheckExtensionAvailability(
+      const char* extension_name,
+      const std::vector<VkExtensionProperties>& available_extensions);
+  bool CheckPhysicalDeviceProperties(
+      VkPhysicalDevice vk_physical_device,
+      uint32_t& selected_graphics_queue_family_index,
+      uint32_t& selected_present_queue_family_index);
 
   DISALLOW_COPY_AND_ASSIGN(VulkanDeviceQueue);
 };

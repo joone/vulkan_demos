@@ -1,97 +1,97 @@
 import("//testing/test.gni")
 
-config("internal_config") {
-  defines = [ "ENABLE_VULKAN" ]
-  defines += [ "VULKAN_IMPLEMENTATION" ]
+    config("internal_config") {
+  defines = ["ENABLE_VULKAN"] defines += ["VULKAN_IMPLEMENTATION"]
 
-  include_dirs = [ "/usr/include" ]
-  if (current_cpu == "x64") {
-      lib_dirs = [
-        "/usr/lib/x86_64-linux-gnu",
+      include_dirs =
+          ["/usr/include"] if (current_cpu ==
+                               "x64"){lib_dirs =
+                                          [
+                                            "/usr/lib/x86_64-linux-gnu",
+                                          ]}
+
+  deps =
+      [
+        "//base",
       ]
-  }
 
-  deps = [
-    "//base",
-  ]
+      libs = ["vulkan"]
 
-  libs = [ "vulkan" ]
-
-  deps += [ 
-    "//skia",
-  ]
+      deps += [
+        "//skia",
+      ]
 }
 
-static_library("vulkan_apis") {
-  sources = [
-    "vulkan_buffer.cc",
-    "vulkan_device_queue.cc",
-    "vulkan_command_pool.cc",
-    "vulkan_image_view.cc",
-    "vulkan_implementation.cc",
-    "vulkan_shader_module.cc",
-    "vulkan_surface.cc",
-    "vulkan_swap_chain.cc",
-    "vulkan_render_pass.cc",
-  ]
+static_library("vulkan_apis"){
+    sources =
+        [
+          "vulkan_buffer.cc",
+          "vulkan_device_queue.cc",
+          "vulkan_command_pool.cc",
+          "vulkan_image_view.cc",
+          "vulkan_implementation.cc",
+          "vulkan_shader_module.cc",
+          "vulkan_surface.cc",
+          "vulkan_swap_chain.cc",
+          "vulkan_render_pass.cc",
+        ]
 
-  deps = [  
-    "//third_party/shaderc:libshaderc",
-    "//ui/base",
-    "//ui/gfx/x",
-  ]
+    deps =
+        [
+          "//third_party/shaderc:libshaderc",
+          "//ui/base",
+          "//ui/gfx/x",
+        ]
 
-  configs += [ "//build/config/linux:x11", ":internal_config" ]
-}
+    configs += [ "//build/config/linux:x11", ":internal_config" ]}
 
-test("demo_1") {
-  sources = [
-    "../demos/demo1.cc",
-    "../tests/native_window_x11.cc",
-  ]
+test("demo_1"){sources =
+                   [
+                     "../demos/demo1.cc",
+                     "../tests/native_window_x11.cc",
+                   ]
 
-  deps = [ 
-    ":vulkan_apis",
-  ]
-}
+               deps =
+                   [
+                     ":vulkan_apis",
+                   ]}
 
-test("demo_2") {
-  sources = [
-    "../demos/demo2.cc",
-    "../tests/native_window_x11.cc",
+test("demo_2"){sources =
+                   [
+                     "../demos/demo2.cc",
+                     "../tests/native_window_x11.cc",
 
-  ]
+                   ]
 
-  deps = [ 
-    ":vulkan_apis",
-  ]
-}
+               deps =
+                   [
+                     ":vulkan_apis",
+                   ]}
 
-test("demo_3") {
-  sources = [
-    "../demos/demo3.cc",
-    "../tests/native_window_x11.cc",
-  ]
+test("demo_3"){sources =
+                   [
+                     "../demos/demo3.cc",
+                     "../tests/native_window_x11.cc",
+                   ]
 
-  deps = [ 
-    ":vulkan_apis",
-  ]
-}
+               deps =
+                   [
+                     ":vulkan_apis",
+                   ]}
 
 test("vulkan_test") {
-  sources = [
-    "../tests/basic_vulkan_test.cc",
-    "../tests/native_window_x11.cc",
-    "../tests/vulkan_test.cc",
-    "../tests/vulkan_tests_main.cc"
-  ]
+  sources =
+      [
+        "../tests/basic_vulkan_test.cc", "../tests/native_window_x11.cc",
+        "../tests/vulkan_test.cc", "../tests/vulkan_tests_main.cc"
+      ]
 
-  deps = [ 
-    "//third_party/shaderc:libshaderc",
-    "//ui/base",
-    "//base/test:test_support",
-    "//testing/gmock",
-    "//testing/gtest",
-    ":vulkan_apis",
-  ]
+      deps = [
+        "//third_party/shaderc:libshaderc",
+        "//ui/base",
+        "//base/test:test_support",
+        "//testing/gmock",
+        "//testing/gtest",
+        ":vulkan_apis",
+      ]
 }

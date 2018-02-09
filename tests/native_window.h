@@ -15,6 +15,8 @@ class VulkanSurface;
 
 gfx::AcceleratedWidget CreateNativeWindow(const gfx::Rect& bounds);
 void DestroyNativeWindow(gfx::AcceleratedWidget window);
-bool RunMainLoop(gfx::AcceleratedWidget window, VulkanDeviceQueue*, VulkanSurface*);
+bool RunMainLoop(gfx::AcceleratedWidget window,
+                 VulkanDeviceQueue*,
+                 VulkanSurface*);
 
 }  // namespace gpu

@@ -35,7 +35,7 @@ class VULKAN_EXPORT VulkanSurface {
   virtual bool Initialize(VulkanDeviceQueue* device_queue,
                           VulkanSurface::Format format) = 0;
   virtual void Destroy() = 0;
-  
+
   virtual bool CreateSurface() = 0;
 
   virtual VkSurfaceKHR handle() = 0;
@@ -44,7 +44,7 @@ class VULKAN_EXPORT VulkanSurface {
 
   virtual VulkanSwapChain* GetSwapChain() = 0;
 
-//  virtual void Finish() = 0;
+  //  virtual void Finish() = 0;
 
   // Create a surface that render directlys into a surface.
   static std::unique_ptr<VulkanSurface> CreateViewSurface(
@@ -54,7 +54,6 @@ class VULKAN_EXPORT VulkanSurface {
   VulkanSurface();
 
  private:
-
   DISALLOW_COPY_AND_ASSIGN(VulkanSurface);
 };
 

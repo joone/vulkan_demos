@@ -2,16 +2,8 @@
 
 namespace intel {
 
-VulkanInstance::VulkanInstance() :
- vk_instance(VK_NULL_HANDLE) {
+VulkanInstance::VulkanInstance() : vk_instance(VK_NULL_HANDLE) {}
 
+bool VulkanInstance::Create() {}
 
-
-}
-
-bool VulkanInstance::Create() {
-  
-
-}
-
-}
+}  // namespace intel

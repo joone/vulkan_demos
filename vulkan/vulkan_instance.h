@@ -7,10 +7,10 @@ namespace intel {
 class VULKAN_EXPORT VulkanInstance {
  public:
   VulkanInstance();
-  ~VulkanInstance() { }
+  ~VulkanInstance() {}
 
   static bool Create();
-  void Initialize(); 
+  void Initialize();
   VkInstance* handle();
 
  private:
@@ -18,4 +18,4 @@ class VULKAN_EXPORT VulkanInstance {
   static VulkanInstance* vulkan_instance_;
 };
 
-}  // namespace gpu
+}  // namespace intel

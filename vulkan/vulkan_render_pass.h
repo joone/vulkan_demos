@@ -5,9 +5,9 @@
 #ifndef GPU_VULKAN_VULKAN_RENDER_PASS_H_
 #define GPU_VULKAN_VULKAN_RENDER_PASS_H_
 
-#include <vector>
-#include <string>
 #include <vulkan/vulkan.h>
+#include <string>
+#include <vector>
 
 #include "base/macros.h"
 #include "gpu/vulkan/vulkan_export.h"
@@ -16,7 +16,7 @@ namespace gpu {
 
 class CommandBufferRecorderBase;
 class VulkanDeviceQueue;
-//class VulkanImageView;
+// class VulkanImageView;
 class VulkanSwapChain;
 
 class VULKAN_EXPORT VulkanRenderPass {
@@ -47,34 +47,36 @@ class VULKAN_EXPORT VulkanRenderPass {
   void Destroy();
 
   void SetClearValue(uint32_t attachment_index, VkClearValue clear_value);
-  bool CreatePipeline(const std::string& vertexShader, const std::string& fragmentShader, bool resize = false);
-  bool CreateFrameBuffer(const VulkanSwapChain* swap_chain, uint32_t resource_index);
-
+  bool CreatePipeline(const std::string& vertexShader,
+                      const std::string& fragmentShader,
+                      bool resize = false);
+  bool CreateFrameBuffer(const VulkanSwapChain* swap_chain,
+                         uint32_t resource_index);
 
   VkRenderPass handle() { return render_pass_; }
- // There is 1 frame buffer for every swap chain image.
+  // There is 1 frame buffer for every swap chain image.
   std::vector<VkFramebuffer> frame_buffers_;
   VkPipeline GetGraphicsPipeline() { return graphics_pipeline_; }
 
- //  bool CreateRenderingResource(uint32_t num_resoures);
- // for Resource, Tutorial4
-  static const size_t                   ResourcesCount_ = 3;
-/*  struct RenderingResourcesData {
-    VkFramebuffer                         Framebuffer;
-   // VkCommandBuffer                       CommandBuffer;
-    VkSemaphore                           ImageAvailableSemaphore;
-    VkSemaphore                           FinishedRenderingSemaphore;
-    VkFence                               Fence;
-  };
-  std::vector<RenderingResourcesData>   RenderingResources_;
-*/ 
+  //  bool CreateRenderingResource(uint32_t num_resoures);
+  // for Resource, Tutorial4
+  static const size_t ResourcesCount_ = 3;
+  /*  struct RenderingResourcesData {
+      VkFramebuffer                         Framebuffer;
+     // VkCommandBuffer                       CommandBuffer;
+      VkSemaphore                           ImageAvailableSemaphore;
+      VkSemaphore                           FinishedRenderingSemaphore;
+      VkFence                               Fence;
+    };
+    std::vector<RenderingResourcesData>   RenderingResources_;
+  */
  private:
   VulkanDeviceQueue* device_queue_ = nullptr;
   const VulkanSwapChain* swap_chain_ = nullptr;
-//  uint32_t num_sub_passes_ = 0;
-//  uint32_t current_sub_pass_ = 0;
+  //  uint32_t num_sub_passes_ = 0;
+  //  uint32_t current_sub_pass_ = 0;
   bool executing_ = false;
-//  VkSubpassContents execution_type_ = VK_SUBPASS_CONTENTS_INLINE;
+  //  VkSubpassContents execution_type_ = VK_SUBPASS_CONTENTS_INLINE;
   VkRenderPass render_pass_ = VK_NULL_HANDLE;
 
   // There is 1 clear color for every attachment which needs a clear.
@@ -84,7 +86,6 @@ class VULKAN_EXPORT VulkanRenderPass {
   // kept in a separate array since it is only used setting clear values.
   std::vector<uint32_t> attachment_clear_indexes_;
 
- 
   VkPipeline graphics_pipeline_;
   VkPipelineLayout pipeline_layout_;
 

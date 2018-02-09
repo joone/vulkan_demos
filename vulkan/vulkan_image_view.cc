@@ -31,8 +31,8 @@ VulkanImageView::VulkanImageView(VulkanDeviceQueue* device_queue)
     : device_queue_(device_queue) {}
 
 VulkanImageView::~VulkanImageView() {
-//  DCHECK_EQ(static_cast<VkImageView>(VK_NULL_HANDLE), handle_);
-//  DCHECK_EQ(IMAGE_TYPE_INVALID, image_type_);
+  //  DCHECK_EQ(static_cast<VkImageView>(VK_NULL_HANDLE), handle_);
+  //  DCHECK_EQ(IMAGE_TYPE_INVALID, image_type_);
 }
 
 bool VulkanImageView::Initialize(VkImage image,
@@ -57,8 +57,7 @@ bool VulkanImageView::Initialize(VkImage image,
 
   VkImageViewCreateInfo image_view_create_info = {};
   image_view_create_info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-  image_view_create_info.pNext = nullptr,
-  image_view_create_info.flags = 0,
+  image_view_create_info.pNext = nullptr, image_view_create_info.flags = 0,
   image_view_create_info.image = image;
   image_view_create_info.viewType = image_view_type;
   image_view_create_info.format = format;

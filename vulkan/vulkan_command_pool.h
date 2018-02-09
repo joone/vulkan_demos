@@ -21,19 +21,20 @@ class VulkanSwapChain;
 class VulkanCommandPool {
  public:
   explicit VulkanCommandPool(VulkanDeviceQueue* device_queue,
-  VulkanSwapChain* swap_chain);
+                             VulkanSwapChain* swap_chain);
   ~VulkanCommandPool();
 
-  bool Initialize(VkCommandPoolCreateFlags flags=0);
+  bool Initialize(VkCommandPoolCreateFlags flags = 0);
   void Destroy();
 
   bool CreateCommandBuffer(VkCommandBuffer* command_buffer);
   std::unique_ptr<VulkanCommandBuffer> CreatePrimaryCommandBuffer();
   std::unique_ptr<VulkanCommandBuffer> CreateSecondaryCommandBuffer();
-  bool Submit(VkCommandBuffer* command_buffer, uint32_t num_wait_semaphores, VkSemaphore* wait_semaphores,
-                                 uint32_t num_signal_semaphores,
-                                 VkSemaphore* signal_semaphores);
-
+  bool Submit(VkCommandBuffer* command_buffer,
+              uint32_t num_wait_semaphores,
+              VkSemaphore* wait_semaphores,
+              uint32_t num_signal_semaphores,
+              VkSemaphore* signal_semaphores);
 
   VkCommandPool handle() { return handle_; }
 

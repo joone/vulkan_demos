@@ -4,8 +4,8 @@
 
 #include "vulkan_shader_module.h"
 
-#include <memory>
 #include <shaderc/shaderc.h>
+#include <memory>
 #include <sstream>
 
 #include "base/logging.h"
@@ -123,9 +123,8 @@ bool VulkanShaderModule::InitializeSPIRV(ShaderType type,
   shader_module_create_info.codeSize = source.length();
 
   VkShaderModule shader_module = VK_NULL_HANDLE;
-  VkResult result =
-      vkCreateShaderModule(device_queue_,
-                           &shader_module_create_info, nullptr, &shader_module);
+  VkResult result = vkCreateShaderModule(
+      device_queue_, &shader_module_create_info, nullptr, &shader_module);
   if (VK_SUCCESS != result) {
     std::stringstream ss;
     ss << "vkCreateShaderModule() failed: " << result;

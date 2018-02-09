@@ -4,9 +4,9 @@
 
 #include "gpu/vulkan/vulkan_implementation.h"
 
+#include <iostream>
 #include <unordered_set>
 #include <vector>
-#include <iostream>
 #include "base/logging.h"
 #include "base/macros.h"
 #include "gpu/vulkan/vulkan_platform.h"
@@ -17,9 +17,11 @@
 
 namespace gpu {
 
-static bool CheckExtensionAvailability( const char *extension_name, const std::vector<VkExtensionProperties> &available_extensions ) {
-  for( size_t i = 0; i < available_extensions.size(); ++i ) {
-    if( strcmp( available_extensions[i].extensionName, extension_name ) == 0 ) {
+static bool CheckExtensionAvailability(
+    const char* extension_name,
+    const std::vector<VkExtensionProperties>& available_extensions) {
+  for (size_t i = 0; i < available_extensions.size(); ++i) {
+    if (strcmp(available_extensions[i].extensionName, extension_name) == 0) {
       return true;
     }
   }
@@ -34,15 +36,20 @@ struct VulkanInstance {
   bool InitializeVulkanInstance() {
     printf("%s\n", __func__);
     uint32_t extensions_count = 0;
-    if( (vkEnumerateInstanceExtensionProperties( nullptr, &extensions_count, nullptr ) != VK_SUCCESS) ||
-        (extensions_count == 0) ) {
-      std::cout << "Error occurred during instance extensions enumeration!" << std::endl;
+    if ((vkEnumerateInstanceExtensionProperties(nullptr, &extensions_count,
+                                                nullptr) != VK_SUCCESS) ||
+        (extensions_count == 0)) {
+      std::cout << "Error occurred during instance extensions enumeration!"
+                << std::endl;
       return false;
     }
 
-    std::vector<VkExtensionProperties> available_extensions( extensions_count );
-    if( vkEnumerateInstanceExtensionProperties( nullptr, &extensions_count, &available_extensions[0] ) != VK_SUCCESS ) {
-      std::cout << "Error occurred during instance extensions enumeration!" << std::endl;
+    std::vector<VkExtensionProperties> available_extensions(extensions_count);
+    if (vkEnumerateInstanceExtensionProperties(nullptr, &extensions_count,
+                                               &available_extensions[0]) !=
+        VK_SUCCESS) {
+      std::cout << "Error occurred during instance extensions enumeration!"
+                << std::endl;
       return false;
     }
 
@@ -57,35 +64,38 @@ struct VulkanInstance {
 #endif
     };
 
-    for( size_t i = 0; i < extensions.size(); ++i ) {
-      if( !CheckExtensionAvailability( extensions[i], available_extensions ) ) {
-        std::cout << "Could not find instance extension named \"" << extensions[i] << "\"!" << std::endl;
+    for (size_t i = 0; i < extensions.size(); ++i) {
+      if (!CheckExtensionAvailability(extensions[i], available_extensions)) {
+        std::cout << "Could not find instance extension named \""
+                  << extensions[i] << "\"!" << std::endl;
         return false;
       }
     }
 
     VkApplicationInfo application_info = {
-      VK_STRUCTURE_TYPE_APPLICATION_INFO,             // VkStructureType            sType
-      nullptr,                                        // const void                *pNext
-      "API without Secrets: Introduction to Vulkan",  // const char                *pApplicationName
-      VK_MAKE_VERSION( 1, 0, 0 ),                     // uint32_t                   applicationVersion
-      "Vulkan Tutorial by Intel",                     // const char                *pEngineName
-      VK_MAKE_VERSION( 1, 0, 0 ),                     // uint32_t                   engineVersion
-      VK_MAKE_VERSION( 1, 0, 0 )                      // uint32_t                   apiVersion
+        VK_STRUCTURE_TYPE_APPLICATION_INFO,  // VkStructureType            sType
+        nullptr,                             // const void                *pNext
+        "API without Secrets: Introduction to Vulkan",  // const char
+                                                        // *pApplicationName
+        VK_MAKE_VERSION(1, 0, 0),    // uint32_t applicationVersion
+        "Vulkan Tutorial by Intel",  // const char                *pEngineName
+        VK_MAKE_VERSION(1, 0, 0),    // uint32_t                   engineVersion
+        VK_MAKE_VERSION(1, 0, 0)     // uint32_t                   apiVersion
     };
 
     VkInstanceCreateInfo instance_create_info = {
-      VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,         // VkStructureType            sType
-      nullptr,                                        // const void                *pNext
-      0,                                              // VkInstanceCreateFlags      flags
-      &application_info,                              // const VkApplicationInfo   *pApplicationInfo
-      0,                                              // uint32_t                   enabledLayerCount
-      nullptr,                                        // const char * const        *ppEnabledLayerNames
-      static_cast<uint32_t>(extensions.size()),       // uint32_t                   enabledExtensionCount
-      &extensions[0]                                  // const char * const        *ppEnabledExtensionNames
+        VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,  // VkStructureType sType
+        nullptr,            // const void                *pNext
+        0,                  // VkInstanceCreateFlags      flags
+        &application_info,  // const VkApplicationInfo   *pApplicationInfo
+        0,                  // uint32_t                   enabledLayerCount
+        nullptr,            // const char * const        *ppEnabledLayerNames
+        static_cast<uint32_t>(extensions.size()),  // enabledExtensionCount
+        &extensions[0]  // const char * const        *ppEnabledExtensionNames
     };
 
-    if( vkCreateInstance( &instance_create_info, nullptr, &vk_instance ) != VK_SUCCESS ) {
+    if (vkCreateInstance(&instance_create_info, nullptr, &vk_instance) !=
+        VK_SUCCESS) {
       std::cout << "Could not create Vulkan instance!" << std::endl;
       return false;
     }

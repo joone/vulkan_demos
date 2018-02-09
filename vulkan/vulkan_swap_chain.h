@@ -5,9 +5,9 @@
 #ifndef GPU_VULKAN_VULKAN_SWAP_CHAIN_H_
 #define GPU_VULKAN_VULKAN_SWAP_CHAIN_H_
 
+#include <vulkan/vulkan.h>
 #include <memory>
 #include <vector>
-#include <vulkan/vulkan.h>
 
 #include "base/logging.h"
 #include "gpu/vulkan/vulkan_export.h"
@@ -16,7 +16,7 @@
 
 namespace gpu {
 
-//class VulkanCommandBuffer;
+// class VulkanCommandBuffer;
 class VulkanCommandPool;
 class VulkanDeviceQueue;
 class VulkanImageView;
@@ -47,20 +47,23 @@ class VulkanSwapChain {
     return GetImageView(current_image_);
   }
 
-  VulkanCommandPool* GetCurrentCommandPool() const { return command_pool_.get(); }
+  VulkanCommandPool* GetCurrentCommandPool() const {
+    return command_pool_.get();
+  }
 
   VkCommandBuffer* GetCommandBuffer(uint32_t index) const {
     DCHECK_LT(index, images_.size());
     return &images_[index]->command_buffer;
   }
 
-  VkSemaphore* GetImageAvailableSemaphore(uint32_t index) { 
-     return &images_[index]->render_semaphore; }
+  VkSemaphore* GetImageAvailableSemaphore(uint32_t index) {
+    return &images_[index]->render_semaphore;
+  }
 
-  VkSemaphore* GetFinishedRenderingSemaphore(uint32_t index) { 
-     return &images_[index]->present_semaphore; }
-  VkFence* GetFence(uint32_t index) { 
-     return &images_[index]->Fence; }
+  VkSemaphore* GetFinishedRenderingSemaphore(uint32_t index) {
+    return &images_[index]->present_semaphore;
+  }
+  VkFence* GetFence(uint32_t index) { return &images_[index]->Fence; }
 
   VkSwapchainKHR handle() const { return swap_chain_; }
   VkFormat format() const { return format_; }
@@ -82,12 +85,18 @@ class VulkanSwapChain {
                             const std::vector<VkSurfaceFormatKHR>);
   void DestroySwapImages();
 
-  uint32_t GetSwapChainNumImages(const VkSurfaceCapabilitiesKHR &surface_capabilities);
-  VkSurfaceFormatKHR GetSwapChainFormat(const std::vector<VkSurfaceFormatKHR> &surface_formats);
-  VkExtent2D GetSwapChainExtent(const VkSurfaceCapabilitiesKHR &surface_capabilities);
-  VkSurfaceTransformFlagBitsKHR GetSwapChainTransform(const VkSurfaceCapabilitiesKHR &surface_capabilities);
-  VkImageUsageFlags GetSwapChainUsageFlags(const VkSurfaceCapabilitiesKHR &surface_capabilities);
-  VkPresentModeKHR GetSwapChainPresentMode(std::vector<VkPresentModeKHR> &present_modes);
+  uint32_t GetSwapChainNumImages(
+      const VkSurfaceCapabilitiesKHR& surface_capabilities);
+  VkSurfaceFormatKHR GetSwapChainFormat(
+      const std::vector<VkSurfaceFormatKHR>& surface_formats);
+  VkExtent2D GetSwapChainExtent(
+      const VkSurfaceCapabilitiesKHR& surface_capabilities);
+  VkSurfaceTransformFlagBitsKHR GetSwapChainTransform(
+      const VkSurfaceCapabilitiesKHR& surface_capabilities);
+  VkImageUsageFlags GetSwapChainUsageFlags(
+      const VkSurfaceCapabilitiesKHR& surface_capabilities);
+  VkPresentModeKHR GetSwapChainPresentMode(
+      std::vector<VkPresentModeKHR>& present_modes);
 
   VulkanDeviceQueue* device_queue_;
   VkSwapchainKHR swap_chain_ = VK_NULL_HANDLE;
@@ -102,14 +111,14 @@ class VulkanSwapChain {
 
     VkImage image = VK_NULL_HANDLE;
     std::unique_ptr<VulkanImageView> image_view;
-    //std::unique_ptr<VulkanCommandBuffer> command_buffer;
-    VkCommandBuffer   command_buffer;
-    VkSampler         Sampler;
-    VkDeviceMemory    Memory;
+    // std::unique_ptr<VulkanCommandBuffer> command_buffer;
+    VkCommandBuffer command_buffer;
+    VkSampler Sampler;
+    VkDeviceMemory Memory;
 
     // Image Available
     VkSemaphore render_semaphore = VK_NULL_HANDLE;
-    // Rendering Finished 
+    // Rendering Finished
     VkSemaphore present_semaphore = VK_NULL_HANDLE;
     // For Tutorial 4
     VkFence Fence;
@@ -118,7 +127,7 @@ class VulkanSwapChain {
   std::vector<std::unique_ptr<ImageData>> images_;
   VkExtent2D extent_;
   uint32_t current_image_ = 0;
-  uint32_t image_count_ = 0;  
+  uint32_t image_count_ = 0;
 
   VkFormat format_ = VK_FORMAT_UNDEFINED;
 };

@@ -29,5 +29,5 @@ class VulkanBuffer {
   uint32_t size_;
 };
 
-}
+}  // namespace gpu
 #endif

@@ -5,8 +5,8 @@
 #ifndef VULKAN_VULKAN_SHADER_MODULE_H_
 #define VULKAN_VULKAN_SHADER_MODULE_H_
 
-#include <string>
 #include <vulkan/vulkan.h>
+#include <string>
 
 #include "base/macros.h"
 
