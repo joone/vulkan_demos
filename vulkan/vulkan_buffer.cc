@@ -19,7 +19,8 @@ VulkanBuffer::~VulkanBuffer() {
 bool VulkanBuffer::Initialize(VulkanDeviceQueue* device_queue, VertexData* vertex_data) {
   printf("VulkanBuffer::%s\n", __func__);
   device_ = device_queue->GetVulkanDevice();
-  size_ = sizeof(*vertex_data);
+  size_ = sizeof(*vertex_data) * 4;
+  printf(" Vertext size=%d\n", size_);
 
   VkBufferCreateInfo buffer_create_info = {
     VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,             // VkStructureType        sType
