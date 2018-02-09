@@ -347,7 +347,7 @@ int main(int argc, char** argv) {
           VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,                  // VkImageLayout                          newLayout
           device_queue.GetPresentQueueFamilyIndex(),   // uint32_t                               srcQueueFamilyIndex
           device_queue.GetGraphicsQueueFamilyIndex(),  // uint32_t                               dstQueueFamilyIndex
-          surface->GetSwapChain()->GetImage(image_index),   // VkImage                                image
+          surface->GetSwapChain()->GetImage(resource_index),   // VkImage                                image
           image_subresource_range                           // VkImageSubresourceRange                subresourceRange
         };
         vkCmdPipelineBarrier(*surface->GetSwapChain()->GetCommandBuffer(resource_index), 
