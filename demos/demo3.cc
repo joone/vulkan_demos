@@ -115,7 +115,6 @@ int main(int argc, char** argv) {
   XEvent event;
   bool loop = true;
   bool resize = false;
-  bool result = true;
 
   while (loop) {
     if (XPending(gfx::GetXDisplay())) {
