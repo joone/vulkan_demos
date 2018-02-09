@@ -32,11 +32,20 @@ bool VulkanCommandPool::Initialize(VkCommandPoolCreateFlags flags) {
   VkDevice vk_device = device_queue_->GetVulkanDevice();
 
   // CreateCommandPool
-  VkCommandPoolCreateInfo cmd_pool_create_info = {
+  /*VkCommandPoolCreateInfo cmd_pool_create_info = {
     VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,     // VkStructureType              sType
     nullptr,                                        // const void*                  pNext
     flags,                                          // VkCommandPoolCreateFlags     flags
     device_queue_->GetPresentQueueFamilyIndex()     // uint32_t                     queueFamilyIndex
+  };*/
+
+   // for tutorial4 (this value should be passed through a parameter)
+   VkCommandPoolCreateInfo cmd_pool_create_info = {
+      VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,       // VkStructureType                sType
+      nullptr,                                          // const void                    *pNext
+      VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT | // VkCommandPoolCreateFlags       flags
+      VK_COMMAND_POOL_CREATE_TRANSIENT_BIT,
+      device_queue_->GetPresentQueueFamilyIndex()                                // uint32_t                       queueFamilyIndex
   };
 
   if( vkCreateCommandPool( vk_device, &cmd_pool_create_info, nullptr, &handle_ ) != VK_SUCCESS ) {
@@ -64,7 +73,7 @@ bool VulkanCommandPool::CreateCommandBuffer(VkCommandBuffer* command_buffer) {
     nullptr,                                        // const void*                  pNext
     handle_,                                        // VkCommandPool                commandPool
     VK_COMMAND_BUFFER_LEVEL_PRIMARY,                // VkCommandBufferLevel         level
-    1                                               // uint32_t                     bufferCount
+    1       // FIXME: no hard coded                // uint32_t                     bufferCount
   };
   if (vkAllocateCommandBuffers(device, &cmd_buffer_allocate_info, command_buffer) != VK_SUCCESS ) {
     std::cout << "Could not allocate command buffers!" << std::endl;

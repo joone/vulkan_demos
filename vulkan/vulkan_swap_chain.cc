@@ -413,7 +413,10 @@ bool VulkanSwapChain::CreateFences() {
   return true;
 }
 
+// For tutorial4
 bool VulkanSwapChain::WaitFences(uint32_t* resource_index, uint32_t* image_index) {
+    printf("VulkanSwapChain::%s\n", __func__);
+
     std::unique_ptr<ImageData>& image_data = images_[*resource_index];
     VkDevice device = device_queue_->GetVulkanDevice();  
     *resource_index = (*resource_index + 1) % image_count_;
@@ -426,7 +429,9 @@ bool VulkanSwapChain::WaitFences(uint32_t* resource_index, uint32_t* image_index
         image_data->render_semaphore, VK_NULL_HANDLE, image_index );
     switch( result ) {
       case VK_SUCCESS:
+        break;
       case VK_SUBOPTIMAL_KHR:
+        printf("  Window resize?\n");
         break;
   //    case VK_ERROR_OUT_OF_DATE_KHR:
 //        return OnWindowSizeChanged();
@@ -477,12 +482,14 @@ bool VulkanSwapChain::SwapBuffer2(uint32_t resource_index, uint32_t* image_index
     case VK_SUCCESS:
       break;
     case VK_ERROR_OUT_OF_DATE_KHR:
-//  case VK_SUBOPTIMAL_KHR:
+    case VK_SUBOPTIMAL_KHR:
+      break;
 //      return OnWindowSizeChanged();
     default:
       std::cout << "Problem occurred during image presentation!" << std::endl;
       return false;
   }
+  printf("end of VulkanSwapChain::%s\n", __func__);
 
   return true;
 }

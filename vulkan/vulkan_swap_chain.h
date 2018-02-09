@@ -54,6 +54,14 @@ class VulkanSwapChain {
     return &images_[index]->command_buffer;
   }
 
+  VkSemaphore* GetImageAvailableSemaphore(uint32_t index) { 
+     return &images_[index]->render_semaphore; }
+
+  VkSemaphore* GetFinishedRenderingSemaphore(uint32_t index) { 
+     return &images_[index]->present_semaphore; }
+  VkFence* GetFence(uint32_t index) { 
+     return &images_[index]->Fence; }
+
   VkSwapchainKHR handle() const { return swap_chain_; }
   VkFormat format() const { return format_; }
   VkExtent2D GetExtent() const { return extent_; }

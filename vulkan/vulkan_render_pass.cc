@@ -101,8 +101,8 @@ bool VulkanRenderPass::Initialize(const VulkanSwapChain* swap_chain) {
       VK_DEPENDENCY_BY_REGION_BIT                     // VkDependencyFlags              dependencyFlags
     }
   };
-  // Totorial4
 
+  // Needs for Totorial4
   VkRenderPassCreateInfo render_pass_create_info = {
     VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,    // VkStructureType                sType
     nullptr,                                      // const void                    *pNext
@@ -115,7 +115,8 @@ bool VulkanRenderPass::Initialize(const VulkanSwapChain* swap_chain) {
     &dependencies[0]                              // const VkSubpassDependency     *pDependencies
   };
 
-  if( vkCreateRenderPass(device, &render_pass_create_info, nullptr, &render_pass_) != VK_SUCCESS ) {
+  if( vkCreateRenderPass(device, &render_pass_create_info, nullptr, &render_pass_)
+      != VK_SUCCESS ) {
     std::cout << "Could not create render pass!" << std::endl;
     return false;
   }
@@ -155,9 +156,10 @@ bool VulkanRenderPass::CreateFrameBuffer(const VulkanSwapChain* swap_chain, uint
   return true;
 }
 
+// resize = true for tutorial4(demo3)
 bool VulkanRenderPass::CreatePipeline(const std::string& kVertexShaderSource, 
     const std::string& kFragShaderSource, bool resize) {
-  printf("VulkanRenderPass::%s\n", __func__);
+  printf("VulkanRenderPass::%s  resize=%d\n", __func__, resize);
   VkDevice device = device_queue_->GetVulkanDevice();
  
   VulkanShaderModule vertex_shader_module(device);
@@ -282,8 +284,8 @@ bool VulkanRenderPass::CreatePipeline(const std::string& kVertexShaderSource,
   VkRect2D* pScissor = nullptr;
 
   if (!resize) {
-      pViewport = &viewport;
-      pScissor = &scissor;    
+    pViewport = &viewport;
+    pScissor = &scissor;    
   }
 
   VkPipelineViewportStateCreateInfo viewport_state_create_info = {
