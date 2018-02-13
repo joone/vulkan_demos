@@ -49,6 +49,7 @@ class VULKAN_EXPORT VulkanRenderPass {
   void SetClearValue(uint32_t attachment_index, VkClearValue clear_value);
   bool CreatePipeline(const std::string& vertexShader,
                       const std::string& fragmentShader,
+                      VkPrimitiveTopology primitiveTopology,
                       bool resize = false);
   bool CreateFrameBuffer(const VulkanSwapChain* swap_chain,
                          uint32_t resource_index);

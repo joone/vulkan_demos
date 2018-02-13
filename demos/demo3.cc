@@ -74,7 +74,8 @@ int main(int argc, char** argv) {
 
   // Create a pipeline using vkCreatePipelineLayout and
   // vkCreateGraphicsPipelines.
-  render_pass.CreatePipeline(kVertexShaderSource, kFragShaderSource, true);
+  render_pass.CreatePipeline(kVertexShaderSource, kFragShaderSource,
+      VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP, true);
 
   // Tutorial04::CreateVertexBuffer
   VulkanBuffer::VertexData vertex_data[] = {

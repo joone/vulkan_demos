@@ -71,8 +71,8 @@ int main(int argc, char** argv) {
 
   // Create a pipeline using vkCreatePipelineLayout and
   // vkCreateGraphicsPipelines.
-  render_pass.CreatePipeline(kVertexShaderSource, kFragShaderSource);
-
+  render_pass.CreatePipeline(kVertexShaderSource, kFragShaderSource,
+      VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
   VkCommandBufferBeginInfo graphics_commandd_buffer_begin_info = {
       VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,  // VkStructureTyp sType
       nullptr,  // const void                 *pNext

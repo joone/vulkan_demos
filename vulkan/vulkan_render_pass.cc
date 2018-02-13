@@ -159,6 +159,7 @@ bool VulkanRenderPass::CreateFrameBuffer(const VulkanSwapChain* swap_chain,
 // resize = true for tutorial4(demo3)
 bool VulkanRenderPass::CreatePipeline(const std::string& kVertexShaderSource,
                                       const std::string& kFragShaderSource,
+                                      VkPrimitiveTopology primitiveTopology,
                                       bool resize) {
   printf("VulkanRenderPass::%s  resize=%d\n", __func__, resize);
   VkDevice device = device_queue_->GetVulkanDevice();
@@ -259,7 +260,7 @@ bool VulkanRenderPass::CreatePipeline(const std::string& kVertexShaderSource,
                                                                     // sType
       nullptr,  // const void                                    *pNext
       0,        // VkPipelineInputAssemblyStateCreateFlags        flags
-      VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,  // VkPrimitiveTopology topology
+      primitiveTopology,  // VkPrimitiveTopology topology
       VK_FALSE                              // VkBool32 primitiveRestartEnable
   };
 
