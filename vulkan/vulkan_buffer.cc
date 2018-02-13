@@ -80,7 +80,7 @@ bool VulkanBuffer::AllocateBufferMemory(VkPhysicalDevice physical_device) {
   for (uint32_t i = 0; i < memory_properties.memoryTypeCount; ++i) {
     if ((buffer_memory_requirements.memoryTypeBits & (1 << i)) &&
         (memory_properties.memoryTypes[i].propertyFlags &
-         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT)) {
+         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) == VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT ) {
       VkMemoryAllocateInfo memory_allocate_info = {
           VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,  // VkStructureType sType
           nullptr,                                 // const void  *pNext
