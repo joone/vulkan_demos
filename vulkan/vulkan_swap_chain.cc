@@ -26,11 +26,13 @@ bool VulkanSwapChain::Initialize(
     VulkanDeviceQueue* device_queue,
     VkSurfaceKHR surface,
     const VkSurfaceCapabilitiesKHR& surface_caps,
-    const std::vector<VkSurfaceFormatKHR> surface_formats) {
+    const std::vector<VkSurfaceFormatKHR> surface_formats,
+    VkCommandPoolCreateFlags command_pool_create_flags) {
   DCHECK(device_queue);
   device_queue_ = device_queue;
   return InitializeSwapChain(surface, surface_caps, surface_formats) &&
-         InitializeSwapImages(surface_caps, surface_formats);
+         InitializeSwapImages(surface_caps, surface_formats,
+             command_pool_create_flags);
 }
 
 void VulkanSwapChain::Destroy() {
@@ -108,7 +110,6 @@ bool VulkanSwapChain::InitializeSwapChain(
     VkSurfaceKHR surface,
     const VkSurfaceCapabilitiesKHR& surface_capabilities,
     const std::vector<VkSurfaceFormatKHR> surface_formats) {
-  printf("VulkanSwapChain::%s\n", __func__);
   VkDevice device = device_queue_->GetVulkanDevice();
   // VkResult result = VK_SUCCESS;
 
@@ -402,10 +403,12 @@ void VulkanSwapChain::DestroySwapChain() {
 
 bool VulkanSwapChain::InitializeSwapImages(
     const VkSurfaceCapabilitiesKHR& surface_caps,
-    const std::vector<VkSurfaceFormatKHR> surface_formats) {
+    const std::vector<VkSurfaceFormatKHR> surface_formats,
+    VkCommandPoolCreateFlags command_pool_create_flags) {
   VkDevice device = device_queue_->GetVulkanDevice();
 
-  command_pool_ = device_queue_->CreateCommandPool(this);
+  command_pool_ = device_queue_->CreateCommandPool(this,
+      command_pool_create_flags);
   if (!command_pool_)
     return false;
 
@@ -448,15 +451,11 @@ bool VulkanSwapChain::InitializeSwapImages(
       std::cout << "Could not create a fence!" << std::endl;
       return false;
     }
-  }  // end of for''
-
-  printf("VulkanSwapChain::%s_end\n", __func__);
-
+  }  // end of for
   return true;
 }
 
 bool VulkanSwapChain::CreateFences() {
-  printf("VulkanSwapChain::%s\n", __func__);
   VkDevice device = device_queue_->GetVulkanDevice();
   VkFenceCreateInfo fence_create_info = {
       VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,  // VkStructureType sType
@@ -472,7 +471,6 @@ bool VulkanSwapChain::CreateFences() {
       return false;
     }
   }
-  printf("VulkanSwapChain::%s_end\n", __func__);
   return true;
 }
 
@@ -570,6 +568,7 @@ void VulkanSwapChain::DestroySwapImages() {
     image_data->render_semaphore = VK_NULL_HANDLE;
     image_data->present_semaphore = VK_NULL_HANDLE;
   }
+  command_pool_->Destroy();
 }
 
 VulkanSwapChain::ImageData::ImageData() {}

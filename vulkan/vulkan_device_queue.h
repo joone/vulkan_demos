@@ -63,7 +63,8 @@ class VULKAN_EXPORT VulkanDeviceQueue {
   bool OnWindowSizeChanged();
   bool ReadyToDraw() { return CanRender_; }
 
-  std::unique_ptr<gpu::VulkanCommandPool> CreateCommandPool(VulkanSwapChain*);
+  std::unique_ptr<gpu::VulkanCommandPool> CreateCommandPool(VulkanSwapChain*,
+      VkCommandPoolCreateFlags command_pool_create_flags);
 
   void CanRender(bool val) { CanRender_ = val; }
 

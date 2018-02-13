@@ -43,7 +43,9 @@ int main(int argc, char** argv) {
   std::unique_ptr<VulkanSurface> surface =
       VulkanSurface::CreateViewSurface(window_);
   surface->CreateSurface();
-  surface->Initialize(&device_queue, VulkanSurface::DEFAULT_SURFACE_FORMAT);
+  surface->Initialize(&device_queue, VulkanSurface::DEFAULT_SURFACE_FORMAT,
+      VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT |
+      VK_COMMAND_POOL_CREATE_TRANSIENT_BIT);
 
   // Create a render pass.
   // Render pass is a set of data required to perform some drawing operations.

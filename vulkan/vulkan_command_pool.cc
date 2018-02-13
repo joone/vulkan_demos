@@ -27,16 +27,15 @@ VulkanCommandPool::~VulkanCommandPool() {
 // Swap chains is connected with drawing and preparing command buffers.
 // Execute commands on a device we submit them to queues through command
 // buffers.
-bool VulkanCommandPool::Initialize(VkCommandPoolCreateFlags flags) {
+bool VulkanCommandPool::Initialize(VkCommandPoolCreateFlags
+    command_pool_create_flags) {
   VkDevice vk_device = device_queue_->GetVulkanDevice();
 
-  // for tutorial4 (this value should be passed through a parameter)
   VkCommandPoolCreateInfo cmd_pool_create_info = {
       VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,  // VkStructureType sType
       nullptr,  // const void 
-      VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT | 
-          VK_COMMAND_POOL_CREATE_TRANSIENT_BIT, // VkCommandPoolCreateFlags
-      device_queue_->GetPresentQueueFamilyIndex()  // uint32_t queueFamilyIndex
+      command_pool_create_flags, // VkCommandPoolCreateFlags
+      device_queue_->GetPresentQueueFamilyIndex() // uint32_t queueFamilyIndex
   };
 
   if (vkCreateCommandPool(vk_device, &cmd_pool_create_info, nullptr,

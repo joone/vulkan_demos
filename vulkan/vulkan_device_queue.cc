@@ -45,14 +45,11 @@ bool VulkanDeviceQueue::OnWindowSizeChanged() {
 }
 
 bool VulkanDeviceQueue::Initialize(uint32_t options) {
-  printf("VulkanDeviceQueue::%s\n", __func__);
   VkInstance vk_instance = gpu::GetVulkanInstance();
   if (VK_NULL_HANDLE == vk_instance)
     return false;
 
-  //
-  // from CreateDevice()
-  //
+  // CreateDevice()
   uint32_t num_devices = 0;
   if ((vkEnumeratePhysicalDevices(vk_instance, &num_devices, nullptr) !=
        VK_SUCCESS) ||
@@ -138,11 +135,8 @@ bool VulkanDeviceQueue::Initialize(uint32_t options) {
 
   vk_graphics_queue_family_index_ = selected_graphics_queue_family_index;
   vk_present_queue_family_index_ = selected_present_queue_family_index;
-  //
   // end of CreateDevice()
-  //
 
-  printf("VulkanDeviceQueue::%s_end\n", __func__);
 
   // GetDeviceQueue()
   vkGetDeviceQueue(vk_device_, vk_graphics_queue_family_index_, 0,
@@ -307,15 +301,11 @@ void VulkanDeviceQueue::Destroy() {
 }
 
 std::unique_ptr<VulkanCommandPool> VulkanDeviceQueue::CreateCommandPool(
-    VulkanSwapChain* swap_chain) {
+    VulkanSwapChain* swap_chain, VkCommandPoolCreateFlags flags) {
   std::unique_ptr<VulkanCommandPool> command_pool(
       new VulkanCommandPool(this, swap_chain));
 
-  // For tutorial4: VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT |
-  // VK_COMMAND_POOL_CREATE_TRANSIENT_BIT
-  if (!command_pool->Initialize(
-          VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT |
-          VK_COMMAND_POOL_CREATE_TRANSIENT_BIT))
+  if (!command_pool->Initialize(flags))
     return nullptr;
 
   return command_pool;

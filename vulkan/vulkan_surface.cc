@@ -62,10 +62,10 @@ class VulkanWSISurface : public VulkanSurface {
   }
 
   bool Initialize(VulkanDeviceQueue* device_queue,
-                  VulkanSurface::Format format) override {
-    printf("VulkanWSISurface::%s\n", __func__);
-
-    // from CreateSwapChain();
+                  VulkanSurface::Format format,
+                  VkCommandPoolCreateFlags command_pool_create_flags)
+      override {
+    // CreateSwapChain();
     if (device_queue->GetVulkanDevice() != VK_NULL_HANDLE) {
       vkDeviceWaitIdle(device_queue->GetVulkanDevice());
     }
@@ -113,11 +113,10 @@ class VulkanWSISurface : public VulkanSurface {
     }
 
     if (!swap_chain_.Initialize(device_queue, surface_, surface_capabilities,
-                                surface_formats)) {
+                                surface_formats, command_pool_create_flags)) {
       return false;
     }
 
-    printf("VulkanWSISurface::%s_end\n", __func__);
     return true;
   }
 

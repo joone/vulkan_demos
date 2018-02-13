@@ -33,7 +33,8 @@ class VULKAN_EXPORT VulkanSurface {
   virtual ~VulkanSurface() = 0;
 
   virtual bool Initialize(VulkanDeviceQueue* device_queue,
-                          VulkanSurface::Format format) = 0;
+                          VulkanSurface::Format format,
+                          VkCommandPoolCreateFlags flasg = 0) = 0;
   virtual void Destroy() = 0;
 
   virtual bool CreateSurface() = 0;
