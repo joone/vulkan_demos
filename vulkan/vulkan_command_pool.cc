@@ -28,25 +28,14 @@ VulkanCommandPool::~VulkanCommandPool() {
 // Execute commands on a device we submit them to queues through command
 // buffers.
 bool VulkanCommandPool::Initialize(VkCommandPoolCreateFlags flags) {
-  printf("VulkanCommandPool::%s\n", __func__);
-
   VkDevice vk_device = device_queue_->GetVulkanDevice();
-
-  // CreateCommandPool
-  /*VkCommandPoolCreateInfo cmd_pool_create_info = {
-    VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,     // VkStructureType sType
-    nullptr,                                        // const void* pNext flags,
-  // VkCommandPoolCreateFlags     flags
-    device_queue_->GetPresentQueueFamilyIndex()     // uint32_t queueFamilyIndex
-  };*/
 
   // for tutorial4 (this value should be passed through a parameter)
   VkCommandPoolCreateInfo cmd_pool_create_info = {
       VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,  // VkStructureType sType
-      nullptr,  // const void                    *pNext
-      VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT |  // VkCommandPoolCreateFlags
-                                                         // flags
-          VK_COMMAND_POOL_CREATE_TRANSIENT_BIT,
+      nullptr,  // const void 
+      VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT | 
+          VK_COMMAND_POOL_CREATE_TRANSIENT_BIT, // VkCommandPoolCreateFlags
       device_queue_->GetPresentQueueFamilyIndex()  // uint32_t queueFamilyIndex
   };
 
@@ -68,15 +57,14 @@ void VulkanCommandPool::Destroy() {
 }
 
 bool VulkanCommandPool::CreateCommandBuffer(VkCommandBuffer* command_buffer) {
-  printf("VulkanCommandPool::%s\n", __func__);
   VkDevice device = device_queue_->GetVulkanDevice();
   // AllocateCommandBuffers
   VkCommandBufferAllocateInfo cmd_buffer_allocate_info = {
-      VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,  // VkStructureType sType
-      nullptr,  // const void*                  pNext
-      handle_,  // VkCommandPool                commandPool
-      VK_COMMAND_BUFFER_LEVEL_PRIMARY,  // VkCommandBufferLevel         level
-      1  // FIXME: no hard coded                // uint32_t bufferCount
+      VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,  // VkStructureType
+      nullptr,                          // const void*
+      handle_,                          // VkCommandPool
+      VK_COMMAND_BUFFER_LEVEL_PRIMARY,  // VkCommandBufferLevel
+      1  // FIXME: no hard coded        // uint32_t bufferCount
   };
   if (vkAllocateCommandBuffers(device, &cmd_buffer_allocate_info,
                                command_buffer) != VK_SUCCESS) {

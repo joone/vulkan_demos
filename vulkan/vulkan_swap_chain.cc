@@ -77,10 +77,9 @@ gfx::SwapResult VulkanSwapChain::SwapBuffers() {
 
   VkPresentInfoKHR present_info = {
       VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,  // VkStructureType        sType
-      nullptr,                             // const void             *pNext
-      1,  // uint32_t                 waitSemaphoreCount
-      &current_image_data
-           ->present_semaphore,  // const VkSemaphore          *pWaitSemaphores
+      nullptr,                   // const void             *pNext
+      1,                         // waitSemaphoreCount
+      &current_image_data->present_semaphore,  // const VkSemaphore         
       1,                         // uint32_t                     swapchainCount
       &swap_chain_,              // const VkSwapchainKHR        *pSwapchains
       &image_index,              // const uint32_t              *pImageIndices
@@ -404,14 +403,12 @@ void VulkanSwapChain::DestroySwapChain() {
 bool VulkanSwapChain::InitializeSwapImages(
     const VkSurfaceCapabilitiesKHR& surface_caps,
     const std::vector<VkSurfaceFormatKHR> surface_formats) {
-  printf("VulkanSwapChain::%s\n", __func__);
   VkDevice device = device_queue_->GetVulkanDevice();
 
   command_pool_ = device_queue_->CreateCommandPool(this);
   if (!command_pool_)
     return false;
 
-  // CreateSemapore()
   VkSemaphoreCreateInfo semaphore_create_info = {
       VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,  // VkStructureType sType
       nullptr,  // const void*              pNext
@@ -421,7 +418,6 @@ bool VulkanSwapChain::InitializeSwapImages(
   VkResult result = VK_SUCCESS;
 
   for (uint32_t i = 0; i < image_count_; ++i) {
-    printf("  create semaphore\n");
     std::unique_ptr<ImageData>& image_data = images_[i];
 
     // Setup semaphores.
@@ -443,9 +439,9 @@ bool VulkanSwapChain::InitializeSwapImages(
     command_pool_->CreateCommandBuffer(&image_data->command_buffer);
 
     VkFenceCreateInfo fence_create_info = {
-        VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,  // VkStructureType sType
-        nullptr,                      // const void                    *pNext
-        VK_FENCE_CREATE_SIGNALED_BIT  // VkFenceCreateFlags             flags
+        VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,  // VkStructureType
+        nullptr,                      // const void *pNext
+        VK_FENCE_CREATE_SIGNALED_BIT  // VkFenceCreateFlags
     };
     if (vkCreateFence(device, &fence_create_info, nullptr,
                       &image_data->Fence) != VK_SUCCESS) {
