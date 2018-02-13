@@ -388,7 +388,7 @@ TEST_F(BasicVulkanTest, BasicVulkanSurface3) {
       {0.7f, 0.7f, 0.0f, 1.0f, 0.3f, 0.3f, 0.3f, 0.0f}};
 
   VulkanBuffer vertexBuffer;
-  vertexBuffer.Initialize(GetDeviceQueue(), vertex_data);
+  vertexBuffer.Initialize(GetDeviceQueue(), vertex_data, 4);
 
   // Run loop
   // Prepare notification for window destruction
