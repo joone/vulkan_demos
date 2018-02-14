@@ -79,6 +79,17 @@ test("demo_3"){sources =
                      ":vulkan_apis",
                    ]}
 
+test("demo4_cube") {
+  sources = [
+     "../demos/demo4_cube.cc",
+     "../tests/native_window_x11.cc",
+  ]
+
+  deps = [
+    ":vulkan_apis",
+  ]
+}
+
 test("vulkan_test") {
   sources =
       [
