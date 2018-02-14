@@ -43,14 +43,15 @@ class VULKAN_EXPORT VulkanRenderPass {
   explicit VulkanRenderPass(VulkanDeviceQueue* device_queue);
   ~VulkanRenderPass();
 
-  bool Initialize(const VulkanSwapChain* swap_chain);
+  bool Initialize(const VulkanSwapChain* swap_chain,
+      std::vector<VkSubpassDependency>& subpass_dependencies);
   void Destroy();
 
   void SetClearValue(uint32_t attachment_index, VkClearValue clear_value);
   bool CreatePipeline(const std::string& vertexShader,
                       const std::string& fragmentShader,
                       VkPrimitiveTopology primitiveTopology,
-                      bool resize = false);
+                      bool qvertex_binding = false);
   bool CreateFrameBuffer(const VulkanSwapChain* swap_chain,
                          uint32_t resource_index);
 

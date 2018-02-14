@@ -49,8 +49,30 @@ int main(int argc, char** argv) {
 
   // Create a render pass.
   // Render pass is a set of data required to perform some drawing operations.
+  std::vector<VkSubpassDependency> subpass_dependencies = {
+      {
+          VK_SUBPASS_EXTERNAL,  // uint32_t srcSubpass
+          0,                    // uint32_t dstSubpass
+          VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,           // VkPipelineStageFlags
+                                                          // srcStageMask
+          VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,  // VkPipelineStageFlags
+                                                          // dstStageMask
+          VK_ACCESS_MEMORY_READ_BIT,             // VkAccessFlags srcAccessMask
+          VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,  // VkAccessFlags dstAccessMask
+          VK_DEPENDENCY_BY_REGION_BIT  // VkDependencyFlags dependencyFlags
+      },
+      {
+          0,                    // uint32_t srcSubpass
+          VK_SUBPASS_EXTERNAL,  // uint32_t dstSubpass
+          VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,  // VkPipelineStageFlags
+          VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,           // VkPipelineStageFlags
+          VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,  // VkAccessFlags srcAccessMask
+          VK_ACCESS_MEMORY_READ_BIT,             // VkAccessFlags dstAccessMask
+          VK_DEPENDENCY_BY_REGION_BIT  // VkDependencyFlags dependencyFlags
+      }};
+
   VulkanRenderPass render_pass(&device_queue);
-  render_pass.Initialize(surface->GetSwapChain());
+  render_pass.Initialize(surface->GetSwapChain(), subpass_dependencies);
 
   const std::string kVertexShaderSource =
       "#version 450\n"

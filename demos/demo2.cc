@@ -48,7 +48,8 @@ int main(int argc, char** argv) {
   // Create a render pass.
   // Render pass is a set of data required to perform some drawing operations.
   VulkanRenderPass render_pass(&device_queue_);
-  render_pass.Initialize(surface->GetSwapChain());
+  std::vector<VkSubpassDependency> subpass_dependencies;
+  render_pass.Initialize(surface->GetSwapChain(), subpass_dependencies);
 
   const std::string kVertexShaderSource =
       "#version 450\n"

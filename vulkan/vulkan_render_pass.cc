@@ -28,8 +28,8 @@ VulkanRenderPass::~VulkanRenderPass() {
 // Render pass describes the internal organization of rendering resources
 // (images/attachments), how they are used, and how they change during the
 // rendering process.
-bool VulkanRenderPass::Initialize(const VulkanSwapChain* swap_chain) {
-  printf("VulkanRenderPass::%s\n", __func__);
+bool VulkanRenderPass::Initialize(const VulkanSwapChain* swap_chain,
+    std::vector<VkSubpassDependency>& subpass_dependencies) {
   DCHECK(!executing_);
   DCHECK_EQ(static_cast<VkRenderPass>(VK_NULL_HANDLE), render_pass_);
   DCHECK(frame_buffers_.empty());
@@ -73,34 +73,14 @@ bool VulkanRenderPass::Initialize(const VulkanSwapChain* swap_chain) {
       nullptr   // const uint32_t*                pPreserveAttachments
   }};
 
-  // Tutorial4 defines dependencies.
-  // When we create a render pass and provide a description for it,
-  // the same information is specified through subpass dependencies
-  std::vector<VkSubpassDependency> dependencies = {
-      {
-          VK_SUBPASS_EXTERNAL,  // uint32_t                       srcSubpass
-          0,                    // uint32_t                       dstSubpass
-          VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,           // VkPipelineStageFlags
-                                                          // srcStageMask
-          VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,  // VkPipelineStageFlags
-                                                          // dstStageMask
-          VK_ACCESS_MEMORY_READ_BIT,             // VkAccessFlags srcAccessMask
-          VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,  // VkAccessFlags dstAccessMask
-          VK_DEPENDENCY_BY_REGION_BIT  // VkDependencyFlags dependencyFlags
-      },
-      {
-          0,                    // uint32_t                       srcSubpass
-          VK_SUBPASS_EXTERNAL,  // uint32_t                       dstSubpass
-          VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,  // VkPipelineStageFlags
-                                                          // srcStageMask
-          VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,           // VkPipelineStageFlags
-                                                          // dstStageMask
-          VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,  // VkAccessFlags srcAccessMask
-          VK_ACCESS_MEMORY_READ_BIT,             // VkAccessFlags dstAccessMask
-          VK_DEPENDENCY_BY_REGION_BIT  // VkDependencyFlags dependencyFlags
-      }};
+  const VkSubpassDependency *pDependencies;
+  uint32_t dependencyCount = subpass_dependencies.size();
+  if (dependencyCount == 0) {
+    pDependencies = nullptr;
+    std::cout << "dependency count = 0\n";
+  } else
+    pDependencies = &subpass_dependencies[0];
 
-  // Needs for Totorial4
   VkRenderPassCreateInfo render_pass_create_info = {
       VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,  // VkStructureType sType
       nullptr,  // const void                    *pNext
@@ -109,8 +89,8 @@ bool VulkanRenderPass::Initialize(const VulkanSwapChain* swap_chain) {
       attachment_descriptions,  // const VkAttachmentDescription *pAttachments
       1,                        // uint32_t                       subpassCount
       subpass_descriptions,     // const VkSubpassDescription    *pSubpasses
-      static_cast<uint32_t>(dependencies.size()),  // uint32_t dependencyCount
-      &dependencies[0]  // const VkSubpassDependency     *pDependencies
+      dependencyCount,  // uint32_t dependencyCount
+      pDependencies  // const VkSubpassDependency     *pDependencies
   };
 
   if (vkCreateRenderPass(device, &render_pass_create_info, nullptr,
@@ -156,12 +136,10 @@ bool VulkanRenderPass::CreateFrameBuffer(const VulkanSwapChain* swap_chain,
   return true;
 }
 
-// resize = true for tutorial4(demo3)
 bool VulkanRenderPass::CreatePipeline(const std::string& kVertexShaderSource,
                                       const std::string& kFragShaderSource,
                                       VkPrimitiveTopology primitiveTopology,
-                                      bool resize) {
-  printf("VulkanRenderPass::%s  resize=%d\n", __func__, resize);
+                                      bool vertex_binding) {
   VkDevice device = device_queue_->GetVulkanDevice();
 
   VulkanShaderModule vertex_shader_module(device);
@@ -236,7 +214,7 @@ bool VulkanRenderPass::CreatePipeline(const std::string& kVertexShaderSource,
   uint32_t binding_size = 0;
   uint32_t attribute_size = 0;
 
-  if (resize) {
+  if (vertex_binding) {
     pVertexBindingDescriptions = &vertex_binding_descriptions[0];
     pVertexAttributeDescriptions = &vertex_attribute_descriptions[0];
     binding_size = static_cast<uint32_t>(vertex_binding_descriptions.size());
@@ -289,7 +267,7 @@ bool VulkanRenderPass::CreatePipeline(const std::string& kVertexShaderSource,
   VkViewport* pViewport = nullptr;
   VkRect2D* pScissor = nullptr;
 
-  if (!resize) {
+  if (!vertex_binding) {
     pViewport = &viewport;
     pScissor = &scissor;
   }
@@ -381,7 +359,7 @@ bool VulkanRenderPass::CreatePipeline(const std::string& kVertexShaderSource,
   // end of tutorial4
 
   const VkPipelineDynamicStateCreateInfo* pDynamicStateCreateInfo = nullptr;
-  if (resize)
+  if (vertex_binding)
     pDynamicStateCreateInfo = &dynamic_state_create_info;
 
   // Tutorial::CreatePipelineLayout(): Creating a Pipeline Layout
