@@ -27,6 +27,7 @@ static_library("vulkan_apis"){
         [
           "vulkan_buffer.cc",
           "vulkan_device_queue.cc",
+          "vulkan_command_buffer.cc",
           "vulkan_command_pool.cc",
           "vulkan_image_view.cc",
           "vulkan_implementation.cc",

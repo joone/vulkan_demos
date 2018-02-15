@@ -25,6 +25,7 @@ class VULKAN_EXPORT VulkanCommandBuffer {
 
   bool Initialize();
   void Destroy();
+  VkCommandBuffer handle() const { return command_buffer_; }
 
   // Submit primary command buffer to the queue.
   bool Submit(uint32_t num_wait_semaphores,

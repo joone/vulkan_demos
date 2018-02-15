@@ -7,7 +7,7 @@
 #include <iostream>
 
 #include "base/logging.h"
-#include "gpu/vulkan/vulkan_implementation.h"
+#include "vulkan_implementation.h"
 #include "ui/gfx/geometry/size.h"
 #include "vulkan_buffer.h"
 #include "vulkan_device_queue.h"

@@ -16,7 +16,7 @@
 
 namespace gpu {
 
-// class VulkanCommandBuffer;
+class VulkanCommandBuffer;
 class VulkanCommandPool;
 class VulkanDeviceQueue;
 class VulkanImageView;
@@ -52,9 +52,9 @@ class VulkanSwapChain {
     return command_pool_.get();
   }
 
-  VkCommandBuffer* GetCommandBuffer(uint32_t index) const {
+  VulkanCommandBuffer* GetCurrentCommandBuffer(uint32_t index) const {
     DCHECK_LT(index, images_.size());
-    return &images_[index]->command_buffer;
+    return images_[index]->command_buffer.get();
   }
 
   VkSemaphore* GetImageAvailableSemaphore(uint32_t index) {
@@ -113,16 +113,13 @@ class VulkanSwapChain {
 
     VkImage image = VK_NULL_HANDLE;
     std::unique_ptr<VulkanImageView> image_view;
-    // std::unique_ptr<VulkanCommandBuffer> command_buffer;
-    VkCommandBuffer command_buffer;
-    VkSampler Sampler;
-    VkDeviceMemory Memory;
+    std::unique_ptr<VulkanCommandBuffer> command_buffer;
 
     // Image Available
     VkSemaphore render_semaphore = VK_NULL_HANDLE;
     // Rendering Finished
     VkSemaphore present_semaphore = VK_NULL_HANDLE;
-    // For Tutorial 4
+    // For Tutorial4. FIXME: remove it.
     VkFence Fence;
   };
 

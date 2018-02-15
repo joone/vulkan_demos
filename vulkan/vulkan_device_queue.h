@@ -44,11 +44,19 @@ class VULKAN_EXPORT VulkanDeviceQueue {
     return vk_device_;
   }
 
+  // for Chromium Vulkan Demo
+  VkQueue GetVulkanQueue() const {
+    //DCHECK_NE(static_cast<VkQueue>(VK_NULL_HANDLE), vk_queue_);
+    return PresentQueue_;
+  }
+
+  // for Intel Vulkan Demo
   VkQueue GetPresentQueue() const {
     //  DCHECK_NE(static_cast<VkQueue>(VK_NULL_HANDLE), vk_queue_);
     return PresentQueue_;
   }
 
+  // for Intel Vulkan Demo, but seems not to be used.
   VkQueue GetGraphicsQueue() const {
     //  DCHECK_NE(static_cast<VkQueue>(VK_NULL_HANDLE), vk_queue_);
     return GraphicsQueue_;
@@ -71,6 +79,7 @@ class VULKAN_EXPORT VulkanDeviceQueue {
  private:
   VkPhysicalDevice vk_physical_device_ = VK_NULL_HANDLE;
   VkDevice vk_device_ = VK_NULL_HANDLE;
+  //VkQueue vk_queue_ = VK_NULL_HANDLE;
   VkQueue GraphicsQueue_ = VK_NULL_HANDLE;
   VkQueue PresentQueue_ = VK_NULL_HANDLE;
 

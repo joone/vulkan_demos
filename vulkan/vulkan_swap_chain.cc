@@ -5,9 +5,9 @@
 #include "vulkan_swap_chain.h"
 
 #include <iostream>
-//#include "gpu/vulkan/vulkan_command_buffer.h"
-#include "gpu/vulkan/vulkan_image_view.h"
-#include "gpu/vulkan/vulkan_implementation.h"
+#include "vulkan_command_buffer.h"
+#include "vulkan_image_view.h"
+#include "vulkan_implementation.h"
 #include "vulkan_command_pool.h"
 #include "vulkan_device_queue.h"
 
@@ -70,7 +70,7 @@ gfx::SwapResult VulkanSwapChain::SwapBuffers() {
   // Submit our command buffer for the current buffer.
   // GetCurrentCommandBuffer::Submit() in Chromium.
   // vkQueueSubmit is called.
-  if (GetCurrentCommandPool()->Submit(&current_image_data->command_buffer, 1,
+  if (GetCurrentCommandPool()->Submit(current_image_data->command_buffer->handle(), 1,
                                       &current_image_data->render_semaphore, 1,
                                       &current_image_data->present_semaphore) !=
       VK_SUCCESS) {
@@ -439,8 +439,9 @@ bool VulkanSwapChain::InitializeSwapImages(
     }
 
     // Initialize the command buffer for this buffer data.
-    command_pool_->CreateCommandBuffer(&image_data->command_buffer);
+    image_data->command_buffer = command_pool_->CreatePrimaryCommandBuffer();
 
+    // FIXME: This should be done in VulkanCommandBuffer::Initialize().
     VkFenceCreateInfo fence_create_info = {
         VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,  // VkStructureType
         nullptr,                      // const void *pNext
@@ -510,23 +511,9 @@ bool VulkanSwapChain::SwapBuffer2(uint32_t resource_index,
   std::unique_ptr<ImageData>& image_data = images_[resource_index];
   VkQueue queue = device_queue_->GetPresentQueue();
 
-  VkPipelineStageFlags wait_dst_stage_mask =
-      VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-  VkSubmitInfo submit_info = {
-      VK_STRUCTURE_TYPE_SUBMIT_INFO,  // VkStructureType              sType
-      nullptr,                        // const void                  *pNext
-      1,  // uint32_t                     waitSemaphoreCount
-      &image_data->render_semaphore,  // const VkSemaphore *pWaitSemaphores
-      &wait_dst_stage_mask,  // const VkPipelineStageFlags  *pWaitDstStageMask;
-      1,                     // uint32_t                     commandBufferCount
-      &image_data->command_buffer,  // const VkCommandBuffer *pCommandBuffers
-      1,  // uint32_t                     signalSemaphoreCount
-      &image_data->present_semaphore  // const VkSemaphore *pSignalSemaphores
-  };
-
-  if (vkQueueSubmit(queue, 1, &submit_info, image_data->Fence) != VK_SUCCESS) {
-    return false;
-  }
+  image_data->command_buffer->Submit(1, &image_data->present_semaphore,
+      1, &image_data->render_semaphore);
+  
 
   VkPresentInfoKHR present_info = {
       VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,  // VkStructureType              sType

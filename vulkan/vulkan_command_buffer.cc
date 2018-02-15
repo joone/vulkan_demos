@@ -2,12 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "gpu/vulkan/vulkan_command_buffer.h"
+#include "vulkan_command_buffer.h"
 
 #include "base/logging.h"
-#include "gpu/vulkan/vulkan_command_pool.h"
-#include "gpu/vulkan/vulkan_device_queue.h"
-#include "gpu/vulkan/vulkan_implementation.h"
+#include "vulkan_command_pool.h"
+#include "vulkan_device_queue.h"
+#include "vulkan_implementation.h"
 
 namespace gpu {
 
@@ -17,14 +17,14 @@ VulkanCommandBuffer::VulkanCommandBuffer(VulkanDeviceQueue* device_queue,
     : primary_(primary),
       device_queue_(device_queue),
       command_pool_(command_pool) {
-  command_pool_->IncrementCommandBufferCount();
+  //command_pool_->IncrementCommandBufferCount();
 }
 
 VulkanCommandBuffer::~VulkanCommandBuffer() {
   DCHECK_EQ(static_cast<VkCommandBuffer>(VK_NULL_HANDLE), command_buffer_);
   DCHECK_EQ(static_cast<VkFence>(VK_NULL_HANDLE), submission_fence_);
   DCHECK(!recording_);
-  command_pool_->DecrementCommandBufferCount();
+  //command_pool_->DecrementCommandBufferCount();
 }
 
 bool VulkanCommandBuffer::Initialize() {
