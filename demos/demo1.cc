@@ -14,6 +14,7 @@
 #include "../tests/native_window.h"
 #include "../vulkan/vulkan_buffer.h"
 #include "../vulkan/vulkan_command_pool.h"
+#include "../vulkan/vulkan_command_buffer.h"
 #include "../vulkan/vulkan_device_queue.h"
 #include "../vulkan/vulkan_implementation.h"
 #include "../vulkan/vulkan_render_pass.h"
@@ -97,21 +98,21 @@ int main(int argc, char** argv) {
         image_subresource_range  // VkImageSubresourceRange subresourceRange
     };
 
-    vkBeginCommandBuffer(*surface->GetSwapChain()->GetCommandBuffer(i),
+    vkBeginCommandBuffer(surface->GetSwapChain()->GetCurrentCommandBuffer(i)->handle(),
                          &cmd_buffer_begin_info);
-    vkCmdPipelineBarrier(*surface->GetSwapChain()->GetCommandBuffer(i),
+    vkCmdPipelineBarrier(surface->GetSwapChain()->GetCurrentCommandBuffer(i)->handle(),
                          VK_PIPELINE_STAGE_TRANSFER_BIT,
                          VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, nullptr, 0,
                          nullptr, 1, &barrier_from_present_to_clear);
-    vkCmdClearColorImage(*surface->GetSwapChain()->GetCommandBuffer(i),
+    vkCmdClearColorImage(surface->GetSwapChain()->GetCurrentCommandBuffer(i)->handle(),
                          swap_chain_images[i],
                          VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &clear_color, 1,
                          &image_subresource_range);
-    vkCmdPipelineBarrier(*surface->GetSwapChain()->GetCommandBuffer(i),
+    vkCmdPipelineBarrier(surface->GetSwapChain()->GetCurrentCommandBuffer(i)->handle(),
                          VK_PIPELINE_STAGE_TRANSFER_BIT,
                          VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0, nullptr, 0,
                          nullptr, 1, &barrier_from_clear_to_present);
-    if (vkEndCommandBuffer(*surface->GetSwapChain()->GetCommandBuffer(i)) !=
+    if (vkEndCommandBuffer(surface->GetSwapChain()->GetCurrentCommandBuffer(i)->handle()) !=
         VK_SUCCESS) {
       std::cout << "Could not record command buffers!" << std::endl;
       return 0;

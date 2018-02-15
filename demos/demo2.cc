@@ -13,6 +13,7 @@
 
 #include "../tests/native_window.h"
 #include "../vulkan/vulkan_buffer.h"
+#include "../vulkan/vulkan_command_buffer.h"
 #include "../vulkan/vulkan_command_pool.h"
 #include "../vulkan/vulkan_device_queue.h"
 #include "../vulkan/vulkan_implementation.h"
@@ -93,7 +94,7 @@ int main(int argc, char** argv) {
     // using vkCreateFrameBufer The framebuffer specifies what images are used
     // as attachmenets on which the render pass operates.9
     render_pass.CreateFrameBuffer(surface->GetSwapChain(), i);
-    vkBeginCommandBuffer(*surface->GetSwapChain()->GetCommandBuffer(i),
+    vkBeginCommandBuffer(surface->GetSwapChain()->GetCurrentCommandBuffer(i)->handle(),
                          &graphics_commandd_buffer_begin_info);
     VkRenderPassBeginInfo render_pass_begin_info = {
         VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,  // VkStructureType sType
@@ -115,15 +116,15 @@ int main(int argc, char** argv) {
         &clear_value  // const VkClearValue            *pClearValues
     };
 
-    vkCmdBeginRenderPass(*surface->GetSwapChain()->GetCommandBuffer(i),
+    vkCmdBeginRenderPass(surface->GetSwapChain()->GetCurrentCommandBuffer(i)->handle(),
                          &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
-    vkCmdBindPipeline(*surface->GetSwapChain()->GetCommandBuffer(i),
+    vkCmdBindPipeline(surface->GetSwapChain()->GetCurrentCommandBuffer(i)->handle(),
                       VK_PIPELINE_BIND_POINT_GRAPHICS,
                       render_pass.GetGraphicsPipeline());
-    vkCmdDraw(*surface->GetSwapChain()->GetCommandBuffer(i), 3, 1, 0, 0);
-    vkCmdEndRenderPass(*surface->GetSwapChain()->GetCommandBuffer(i));
+    vkCmdDraw(surface->GetSwapChain()->GetCurrentCommandBuffer(i)->handle(), 3, 1, 0, 0);
+    vkCmdEndRenderPass(surface->GetSwapChain()->GetCurrentCommandBuffer(i)->handle());
 
-    if (vkEndCommandBuffer(*surface->GetSwapChain()->GetCommandBuffer(i)) !=
+    if (vkEndCommandBuffer(surface->GetSwapChain()->GetCurrentCommandBuffer(i)->handle()) !=
         VK_SUCCESS) {
       std::cout << "Could not record command buffers!" << std::endl;
       return 0;
