@@ -1,7 +1,10 @@
 # Vulkan Demos
+
+This vulkan demos can be built in Chromium 70.0.3538.67.
+
 Install vulkan library in your system.
 ```
-$  sudo apt-get install libvulkan-dev
+$  sudo apt-get install libvulkan-dev mesa-common-dev
 ```
 
 ```

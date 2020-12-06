@@ -1,14 +1,12 @@
 import("//testing/test.gni")
 
-    config("internal_config") {
+  config("internal_config") {
   defines = ["ENABLE_VULKAN"] defines += ["VULKAN_IMPLEMENTATION"]
-
-      include_dirs =
-          ["/usr/include"] if (current_cpu ==
-                               "x64"){lib_dirs =
-                                          [
-                                            "/usr/lib/x86_64-linux-gnu",
-                                          ]}
+  include_dirs = ["/usr/include"]
+  if (current_cpu == "x64"){
+    lib_dirs = [
+     "/usr/lib/x86_64-linux-gnu",
+    ]}
 
   deps =
       [
@@ -36,15 +34,19 @@ static_library("vulkan_apis"){
           "vulkan_swap_chain.cc",
           "vulkan_render_pass.cc",
         ]
+  
+ all_dependent_configs = [ "//third_party/vulkan:vulkan_config" ]
 
+   
     deps =
         [
-          "//third_party/shaderc:libshaderc",
           "//ui/base",
           "//ui/gfx/x",
+          "//ui/gfx",
+          "//ui/gl",
         ]
 
-    configs += [ "//build/config/linux:x11", ":internal_config" ]}
+    configs += [ "//build/config/linux:x11", ":internal_config", "//build/config/linux:glib" ]}
 
 test("demo_1"){sources =
                    [
@@ -99,7 +101,6 @@ test("vulkan_test") {
       ]
 
       deps = [
-        "//third_party/shaderc:libshaderc",
         "//ui/base",
         "//base/test:test_support",
         "//testing/gmock",
