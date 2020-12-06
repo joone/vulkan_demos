@@ -19,6 +19,9 @@ Add the following configurations:
 enable_vulkan = true
 use_sysroot = false
 import("//vulkan_demos/build/vulkan.gni")
+use_gnome_keyring = false
+use_system_libdrm = true
+
 ```
 ```
 $ ninja -C out/Release vulkan_test
