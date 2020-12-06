@@ -1,4 +1,7 @@
 # Vulkan Demos
+
+Tested in Chromium(b6ed4eb6ccbc6a596222190e7e695645cf8bab72)
+
 Install vulkan library in your system.
 ```
 $  sudo apt-get install libvulkan-dev
