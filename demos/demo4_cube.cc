@@ -14,6 +14,7 @@
 #include "../tests/native_window.h"
 #include "../vulkan/vulkan_buffer.h"
 #include "../vulkan/vulkan_command_pool.h"
+#include "../vulkan/vulkan_command_buffer.h"
 #include "../vulkan/vulkan_device_queue.h"
 #include "../vulkan/vulkan_implementation.h"
 #include "../vulkan/vulkan_render_pass.h"
@@ -197,7 +198,7 @@ VulkanBuffer::VertexData vertex_data[] = {
       };
 
       vkBeginCommandBuffer(
-          *surface->GetSwapChain()->GetCommandBuffer(resource_index),
+          surface->GetSwapChain()->GetCurrentCommandBuffer(resource_index)->handle(),
           &command_buffer_begin_info);
 
       VkImageSubresourceRange image_subresource_range = {
@@ -225,7 +226,7 @@ VulkanBuffer::VertexData vertex_data[] = {
         };
 
         vkCmdPipelineBarrier(
-            *surface->GetSwapChain()->GetCommandBuffer(resource_index),
+            surface->GetSwapChain()->GetCurrentCommandBuffer(resource_index)->handle(),
             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, 0, 0, nullptr, 0,
             nullptr, 1, &barrier_from_present_to_draw);
@@ -255,10 +256,10 @@ VulkanBuffer::VertexData vertex_data[] = {
       };
 
       vkCmdBeginRenderPass(
-          *surface->GetSwapChain()->GetCommandBuffer(resource_index),
+          surface->GetSwapChain()->GetCurrentCommandBuffer(resource_index)->handle(),
           &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
       vkCmdBindPipeline(
-          *surface->GetSwapChain()->GetCommandBuffer(resource_index),
+          surface->GetSwapChain()->GetCurrentCommandBuffer(resource_index)->handle(),
           VK_PIPELINE_BIND_POINT_GRAPHICS, render_pass.GetGraphicsPipeline());
 
       VkViewport viewport = {
@@ -285,20 +286,20 @@ VulkanBuffer::VertexData vertex_data[] = {
           }};
 
       vkCmdSetViewport(
-          *surface->GetSwapChain()->GetCommandBuffer(resource_index), 0, 1,
+          surface->GetSwapChain()->GetCurrentCommandBuffer(resource_index)->handle(), 0, 1,
           &viewport);
       vkCmdSetScissor(
-          *surface->GetSwapChain()->GetCommandBuffer(resource_index), 0, 1,
+          surface->GetSwapChain()->GetCurrentCommandBuffer(resource_index)->handle(), 0, 1,
           &scissor);
 
       VkDeviceSize offset = 0;
       vkCmdBindVertexBuffers(
-          *surface->GetSwapChain()->GetCommandBuffer(resource_index), 0, 1,
+          surface->GetSwapChain()->GetCurrentCommandBuffer(resource_index)->handle(), 0, 1,
           vertexBuffer.handle(), &offset);
-      vkCmdDraw(*surface->GetSwapChain()->GetCommandBuffer(resource_index), 36,
+      vkCmdDraw(surface->GetSwapChain()->GetCurrentCommandBuffer(resource_index)->handle(), 36,
                 1, 0, 0);
       vkCmdEndRenderPass(
-          *surface->GetSwapChain()->GetCommandBuffer(resource_index));
+          surface->GetSwapChain()->GetCurrentCommandBuffer(resource_index)->handle());
 
       if (device_queue.GetGraphicsQueue() != device_queue.GetPresentQueue()) {
         VkImageMemoryBarrier barrier_from_draw_to_present = {
@@ -316,14 +317,13 @@ VulkanBuffer::VertexData vertex_data[] = {
             image_subresource_range  // VkImageSubresourceRange subresourceRange
         };
         vkCmdPipelineBarrier(
-            *surface->GetSwapChain()->GetCommandBuffer(resource_index),
+            surface->GetSwapChain()->GetCurrentCommandBuffer(resource_index)->handle(),
             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
             VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0, nullptr, 0, nullptr, 1,
             &barrier_from_draw_to_present);
       }
 
-      if (vkEndCommandBuffer(*surface->GetSwapChain()->GetCommandBuffer(
-              resource_index)) != VK_SUCCESS) {
+      if (vkEndCommandBuffer(surface->GetSwapChain()->GetCurrentCommandBuffer(resource_index)->handle()) != VK_SUCCESS) {
         std::cout << "Could not record command buffer!" << std::endl;
         return 0;
       }

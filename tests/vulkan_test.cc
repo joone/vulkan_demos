@@ -14,6 +14,7 @@
 #include "ui/gfx/x/x11_types.h"
 
 #include "../vulkan/vulkan_buffer.h"
+#include "../vulkan/vulkan_command_buffer.h"
 #include "../vulkan/vulkan_command_pool.h"
 #include "../vulkan/vulkan_device_queue.h"
 #include "../vulkan/vulkan_render_pass.h"
@@ -92,21 +93,21 @@ TEST_F(BasicVulkanTest, BasicVulkanSurface) {
         image_subresource_range  // VkImageSubresourceRange subresourceRange
     };
 
-    vkBeginCommandBuffer(*surface->GetSwapChain()->GetCommandBuffer(i),
+    vkBeginCommandBuffer(surface->GetSwapChain()->GetCurrentCommandBuffer(i)->handle(),
                          &cmd_buffer_begin_info);
-    vkCmdPipelineBarrier(*surface->GetSwapChain()->GetCommandBuffer(i),
+    vkCmdPipelineBarrier(surface->GetSwapChain()->GetCurrentCommandBuffer(i)->handle(),
                          VK_PIPELINE_STAGE_TRANSFER_BIT,
                          VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, nullptr, 0,
                          nullptr, 1, &barrier_from_present_to_clear);
-    vkCmdClearColorImage(*surface->GetSwapChain()->GetCommandBuffer(i),
+    vkCmdClearColorImage(surface->GetSwapChain()->GetCurrentCommandBuffer(i)->handle(),
                          swap_chain_images[i],
                          VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &clear_color, 1,
                          &image_subresource_range);
-    vkCmdPipelineBarrier(*surface->GetSwapChain()->GetCommandBuffer(i),
+    vkCmdPipelineBarrier(surface->GetSwapChain()->GetCurrentCommandBuffer(i)->handle(),
                          VK_PIPELINE_STAGE_TRANSFER_BIT,
                          VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0, nullptr, 0,
                          nullptr, 1, &barrier_from_clear_to_present);
-    if (vkEndCommandBuffer(*surface->GetSwapChain()->GetCommandBuffer(i)) !=
+    if (vkEndCommandBuffer(surface->GetSwapChain()->GetCurrentCommandBuffer(i)->handle()) !=
         VK_SUCCESS) {
       std::cout << "Could not record command buffers!" << std::endl;
       return;
@@ -192,7 +193,7 @@ TEST_F(BasicVulkanTest, BasicVulkanSurface2) {
                                   VulkanSurface::DEFAULT_SURFACE_FORMAT));
 
   VulkanRenderPass render_pass(GetDeviceQueue());
-  EXPECT_TRUE(render_pass.Initialize(surface->GetSwapChain()));
+  //EXPECT_TRUE(render_pass.Initialize(surface->GetSwapChain()));
 
   const std::string kVertexShaderSource =
       "#version 450\n"
@@ -213,8 +214,9 @@ TEST_F(BasicVulkanTest, BasicVulkanSurface2) {
       "  out_Color = vec4( 0.0, 0.4, 1.0, 1.0 );\n"
       "}";
 
-  EXPECT_TRUE(
-      render_pass.CreatePipeline(kVertexShaderSource, kFragShaderSource));
+ 
+      render_pass.CreatePipeline(kVertexShaderSource, kFragShaderSource,
+         VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP, true);
 
   VkCommandBufferBeginInfo graphics_commandd_buffer_begin_info = {
       VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,  // VkStructureType sType
@@ -234,7 +236,7 @@ TEST_F(BasicVulkanTest, BasicVulkanSurface2) {
   for (size_t i = 0; i < image_count; ++i) {
     render_pass.CreateFrameBuffer(surface->GetSwapChain(), i);
 
-    vkBeginCommandBuffer(*surface->GetSwapChain()->GetCommandBuffer(i),
+    vkBeginCommandBuffer(surface->GetSwapChain()->GetCurrentCommandBuffer(i)->handle(),
                          &graphics_commandd_buffer_begin_info);
     VkRenderPassBeginInfo render_pass_begin_info = {
         VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,  // VkStructureType sType
@@ -256,17 +258,17 @@ TEST_F(BasicVulkanTest, BasicVulkanSurface2) {
         &clear_value  // const VkClearValue            *pClearValues
     };
 
-    vkCmdBeginRenderPass(*surface->GetSwapChain()->GetCommandBuffer(i),
+    vkCmdBeginRenderPass(surface->GetSwapChain()->GetCurrentCommandBuffer(i)->handle(),
                          &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
 
-    vkCmdBindPipeline(*surface->GetSwapChain()->GetCommandBuffer(i),
+    vkCmdBindPipeline(surface->GetSwapChain()->GetCurrentCommandBuffer(i)->handle(),
                       VK_PIPELINE_BIND_POINT_GRAPHICS,
                       render_pass.GetGraphicsPipeline());
 
-    vkCmdDraw(*surface->GetSwapChain()->GetCommandBuffer(i), 3, 1, 0, 0);
-    vkCmdEndRenderPass(*surface->GetSwapChain()->GetCommandBuffer(i));
+    vkCmdDraw(surface->GetSwapChain()->GetCurrentCommandBuffer(i)->handle(), 3, 1, 0, 0);
+    vkCmdEndRenderPass(surface->GetSwapChain()->GetCurrentCommandBuffer(i)->handle());
 
-    if (vkEndCommandBuffer(*surface->GetSwapChain()->GetCommandBuffer(i)) !=
+    if (vkEndCommandBuffer(surface->GetSwapChain()->GetCurrentCommandBuffer(i)->handle()) !=
         VK_SUCCESS) {
       std::cout << "Could not record command buffer!" << std::endl;
       return;
@@ -353,7 +355,31 @@ TEST_F(BasicVulkanTest, BasicVulkanSurface3) {
 
   // Create a RenderPass
   VulkanRenderPass render_pass(GetDeviceQueue());
-  EXPECT_TRUE(render_pass.Initialize(surface->GetSwapChain()));
+  // Create a render pass.
+  // Render pass is a set of data required to perform some drawing operations.
+  std::vector<VkSubpassDependency> subpass_dependencies = {
+      {
+          VK_SUBPASS_EXTERNAL,  // uint32_t srcSubpass
+          0,                    // uint32_t dstSubpass
+          VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,           // VkPipelineStageFlags
+                                                          // srcStageMask
+          VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,  // VkPipelineStageFlags
+                                                          // dstStageMask
+          VK_ACCESS_MEMORY_READ_BIT,             // VkAccessFlags srcAccessMask
+          VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,  // VkAccessFlags dstAccessMask
+          VK_DEPENDENCY_BY_REGION_BIT  // VkDependencyFlags dependencyFlags
+      },
+      {
+          0,                    // uint32_t srcSubpass
+          VK_SUBPASS_EXTERNAL,  // uint32_t dstSubpass
+          VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,  // VkPipelineStageFlags
+          VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,           // VkPipelineStageFlags
+          VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,  // VkAccessFlags srcAccessMask
+          VK_ACCESS_MEMORY_READ_BIT,             // VkAccessFlags dstAccessMask
+          VK_DEPENDENCY_BY_REGION_BIT  // VkDependencyFlags dependencyFlags
+      }};
+
+  render_pass.Initialize(surface->GetSwapChain(), subpass_dependencies);
 
   const std::string kVertexShaderSource =
       "#version 450\n"
@@ -377,8 +403,8 @@ TEST_F(BasicVulkanTest, BasicVulkanSurface3) {
       "o_Color = v_Color;"
       "}";
 
-  EXPECT_TRUE(
-      render_pass.CreatePipeline(kVertexShaderSource, kFragShaderSource, true));
+      render_pass.CreatePipeline(kVertexShaderSource, kFragShaderSource,
+	      VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP, true);
 
   // Tutorial04::CreateVertexBuffer
   VulkanBuffer::VertexData vertex_data[] = {
@@ -467,7 +493,7 @@ TEST_F(BasicVulkanTest, BasicVulkanSurface3) {
       };
 
       vkBeginCommandBuffer(
-          *surface->GetSwapChain()->GetCommandBuffer(resource_index),
+          surface->GetSwapChain()->GetCurrentCommandBuffer(resource_index)->handle(),
           &command_buffer_begin_info);
 
       VkImageSubresourceRange image_subresource_range = {
@@ -497,7 +523,7 @@ TEST_F(BasicVulkanTest, BasicVulkanSurface3) {
         };
 
         vkCmdPipelineBarrier(
-            *surface->GetSwapChain()->GetCommandBuffer(resource_index),
+            surface->GetSwapChain()->GetCurrentCommandBuffer(resource_index)->handle(),
             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, 0, 0, nullptr, 0,
             nullptr, 1, &barrier_from_present_to_draw);
@@ -527,10 +553,10 @@ TEST_F(BasicVulkanTest, BasicVulkanSurface3) {
       };
 
       vkCmdBeginRenderPass(
-          *surface->GetSwapChain()->GetCommandBuffer(resource_index),
+          surface->GetSwapChain()->GetCurrentCommandBuffer(resource_index)->handle(),
           &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
       vkCmdBindPipeline(
-          *surface->GetSwapChain()->GetCommandBuffer(resource_index),
+          surface->GetSwapChain()->GetCurrentCommandBuffer(resource_index)->handle(),
           VK_PIPELINE_BIND_POINT_GRAPHICS, render_pass.GetGraphicsPipeline());
 
       VkViewport viewport = {
@@ -557,20 +583,20 @@ TEST_F(BasicVulkanTest, BasicVulkanSurface3) {
           }};
 
       vkCmdSetViewport(
-          *surface->GetSwapChain()->GetCommandBuffer(resource_index), 0, 1,
+          surface->GetSwapChain()->GetCurrentCommandBuffer(resource_index)->handle(), 0, 1,
           &viewport);
       vkCmdSetScissor(
-          *surface->GetSwapChain()->GetCommandBuffer(resource_index), 0, 1,
+          surface->GetSwapChain()->GetCurrentCommandBuffer(resource_index)->handle(), 0, 1,
           &scissor);
 
       VkDeviceSize offset = 0;
       vkCmdBindVertexBuffers(
-          *surface->GetSwapChain()->GetCommandBuffer(resource_index), 0, 1,
+          surface->GetSwapChain()->GetCurrentCommandBuffer(resource_index)->handle(), 0, 1,
           vertexBuffer.handle(), &offset);
-      vkCmdDraw(*surface->GetSwapChain()->GetCommandBuffer(resource_index), 4,
+      vkCmdDraw(surface->GetSwapChain()->GetCurrentCommandBuffer(resource_index)->handle(), 4,
                 1, 0, 0);
       vkCmdEndRenderPass(
-          *surface->GetSwapChain()->GetCommandBuffer(resource_index));
+          surface->GetSwapChain()->GetCurrentCommandBuffer(resource_index)->handle());
 
       if (GetDeviceQueue()->GetGraphicsQueue() !=
           GetDeviceQueue()->GetPresentQueue()) {
@@ -590,14 +616,14 @@ TEST_F(BasicVulkanTest, BasicVulkanSurface3) {
             image_subresource_range  // VkImageSubresourceRange subresourceRange
         };
         vkCmdPipelineBarrier(
-            *surface->GetSwapChain()->GetCommandBuffer(resource_index),
+            surface->GetSwapChain()->GetCurrentCommandBuffer(resource_index)->handle(),
             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
             VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0, nullptr, 0, nullptr, 1,
             &barrier_from_draw_to_present);
       }
 
-      if (vkEndCommandBuffer(*surface->GetSwapChain()->GetCommandBuffer(
-              resource_index)) != VK_SUCCESS) {
+      if (vkEndCommandBuffer(surface->GetSwapChain()->GetCurrentCommandBuffer(
+              resource_index)->handle()) != VK_SUCCESS) {
         std::cout << "Could not record command buffer!" << std::endl;
         return;
       }
