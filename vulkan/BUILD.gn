@@ -1,23 +1,23 @@
 import("//testing/test.gni")
 
-  config("internal_config") {
+config("internal_config") {
   defines = ["ENABLE_VULKAN"] defines += ["VULKAN_IMPLEMENTATION"]
   include_dirs = ["/usr/include"]
-  if (current_cpu == "x64"){
+  if (current_cpu == "x64") {
     lib_dirs = [
-     "/usr/lib/x86_64-linux-gnu",
-    ]}
+      "/usr/lib/x86_64-linux-gnu",
+    ]
+  }
 
-  deps =
-      [
-        "//base",
-      ]
+  deps = [
+    "//base",
+  ]
 
-      libs = ["vulkan"]
+  libs = ["vulkan"]
 
-      deps += [
-        "//skia",
-      ]
+  deps += [
+   "//skia",
+  ]
 }
 
 static_library("vulkan_apis"){
@@ -34,19 +34,14 @@ static_library("vulkan_apis"){
           "vulkan_swap_chain.cc",
           "vulkan_render_pass.cc",
         ]
-  
- all_dependent_configs = [ "//third_party/vulkan:vulkan_config" ]
 
-   
     deps =
         [
           "//ui/base",
           "//ui/gfx/x",
-          "//ui/gfx",
-          "//ui/gl",
         ]
 
-    configs += [ "//build/config/linux:x11", ":internal_config", "//build/config/linux:glib" ]}
+    configs += [ "//build/config/linux:x11", ":internal_config" ]}
 
 test("demo_1"){sources =
                    [
